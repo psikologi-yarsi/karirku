@@ -1,0 +1,1978 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>KarirKu — Eksplorasi Jalur Karier yang Selaras dengan Minatmu</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<style>
+  :root {
+    --bg: #0D0D1A;
+    --surface: #13132A;
+    --surface2: #1A1A35;
+    --border: rgba(255,255,255,0.08);
+    --text: #F0EFF8;
+    --muted: rgba(240,239,248,0.55);
+    --r: #FF6B6B; --r-soft: rgba(255,107,107,0.15); --r-glow: rgba(255,107,107,0.3);
+    --i: #FFB347; --i-soft: rgba(255,179,71,0.15); --i-glow: rgba(255,179,71,0.3);
+    --a: #C77DFF; --a-soft: rgba(199,125,255,0.15); --a-glow: rgba(199,125,255,0.3);
+    --s: #56CFE1; --s-soft: rgba(86,207,225,0.15); --s-glow: rgba(86,207,225,0.3);
+    --e: #FF9F1C; --e-soft: rgba(255,159,28,0.15); --e-glow: rgba(255,159,28,0.3);
+    --c: #80ED99; --c-soft: rgba(128,237,153,0.15); --c-glow: rgba(128,237,153,0.3);
+    --accent: #7B61FF; --accent2: #FF61D2;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  h1, h2, h3, .brand { font-family: 'Syne', sans-serif; }
+
+  /* ========== PAGES ========== */
+  .page { display: none; min-height: 100vh; }
+  .page.active { display: flex; flex-direction: column; }
+
+  /* ========== ANIMATED BG ========== */
+  .bg-orbs {
+    position: fixed; inset: 0; pointer-events: none; z-index: 0; overflow: hidden;
+  }
+  .orb {
+    position: absolute; border-radius: 50%; filter: blur(80px); opacity: 0.18;
+    animation: drift 20s ease-in-out infinite alternate;
+  }
+  .orb1 { width:500px; height:500px; background:var(--accent); top:-100px; left:-100px; animation-delay:0s; }
+  .orb2 { width:400px; height:400px; background:var(--accent2); bottom:-80px; right:-60px; animation-delay:-7s; }
+  .orb3 { width:300px; height:300px; background:var(--s); top:40%; left:60%; animation-delay:-13s; }
+  @keyframes drift { 0%{transform:translate(0,0) scale(1)} 100%{transform:translate(40px,30px) scale(1.1)} }
+
+  /* ========== NAV ========== */
+  nav {
+    position: relative; z-index: 10;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 20px 40px;
+    border-bottom: 1px solid var(--border);
+    background: rgba(13,13,26,0.8);
+    backdrop-filter: blur(12px);
+  }
+  .brand { font-size: 22px; font-weight: 800; letter-spacing: -0.5px; }
+  .brand span { background: linear-gradient(135deg, var(--accent), var(--accent2)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+  .nav-links { display: flex; gap: 8px; }
+  .nav-btn {
+    padding: 8px 18px; border-radius: 20px; border: 1px solid var(--border);
+    background: transparent; color: var(--muted); cursor: pointer;
+    font-family: 'Plus Jakarta Sans', sans-serif; font-size: 14px; font-weight: 500;
+    transition: all 0.2s;
+  }
+  .nav-btn:hover, .nav-btn.active { background: var(--surface2); color: var(--text); border-color: rgba(255,255,255,0.2); }
+  .nav-btn.primary {
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    border: none; color: #fff;
+  }
+  .nav-btn.primary:hover { opacity: 0.9; transform: translateY(-1px); }
+
+  /* ========== HERO ========== */
+  .hero {
+    position: relative; z-index: 1;
+    flex: 1; display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    text-align: center; padding: 60px 40px;
+    gap: 28px;
+  }
+  .hero-badge {
+    display: inline-flex; align-items: center; gap: 8px;
+    padding: 8px 18px; border-radius: 20px;
+    background: var(--surface2); border: 1px solid var(--border);
+    font-size: 13px; color: var(--muted);
+  }
+  .hero-badge .dot { width: 7px; height: 7px; border-radius: 50%; background: var(--c); display: inline-block; animation: pulse 2s ease infinite; }
+  @keyframes pulse { 0%,100%{transform:scale(1);opacity:1} 50%{transform:scale(1.4);opacity:0.7} }
+
+  .hero h1 {
+    font-size: clamp(36px, 6vw, 72px); font-weight: 800; line-height: 1.05;
+    letter-spacing: -2px;
+  }
+  .hero h1 .highlight {
+    background: linear-gradient(135deg, var(--accent) 0%, var(--accent2) 50%, var(--r) 100%);
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  }
+  .hero-sub {
+    font-size: 18px; color: var(--muted); max-width: 500px; line-height: 1.6;
+  }
+  .hero-cta {
+    display: flex; gap: 12px; flex-wrap: wrap; justify-content: center;
+  }
+  .btn-primary {
+    padding: 14px 32px; border-radius: 30px;
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    border: none; color: #fff; font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 16px; font-weight: 600; cursor: pointer;
+    transition: all 0.25s; box-shadow: 0 0 30px rgba(123,97,255,0.35);
+  }
+  .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 0 45px rgba(123,97,255,0.5); }
+  .btn-ghost {
+    padding: 14px 32px; border-radius: 30px;
+    background: transparent; border: 1px solid var(--border);
+    color: var(--muted); font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 16px; cursor: pointer; transition: all 0.2s;
+  }
+  .btn-ghost:hover { border-color: rgba(255,255,255,0.25); color: var(--text); }
+
+  /* RIASEC chips preview */
+  .riasec-chips {
+    display: flex; gap: 10px; flex-wrap: wrap; justify-content: center;
+    max-width: 500px;
+  }
+  .chip {
+    padding: 8px 16px; border-radius: 20px; font-size: 13px; font-weight: 600;
+    letter-spacing: 0.5px; cursor: default;
+    animation: float 4s ease-in-out infinite alternate;
+  }
+  .chip.R { background: var(--r-soft); color: var(--r); border: 1px solid rgba(255,107,107,0.25); animation-delay: 0s; }
+  .chip.I { background: var(--i-soft); color: var(--i); border: 1px solid rgba(255,179,71,0.25); animation-delay: -0.5s; }
+  .chip.A { background: var(--a-soft); color: var(--a); border: 1px solid rgba(199,125,255,0.25); animation-delay: -1s; }
+  .chip.S { background: var(--s-soft); color: var(--s); border: 1px solid rgba(86,207,225,0.25); animation-delay: -1.5s; }
+  .chip.E { background: var(--e-soft); color: var(--e); border: 1px solid rgba(255,159,28,0.25); animation-delay: -2s; }
+  .chip.C { background: var(--c-soft); color: var(--c); border: 1px solid rgba(128,237,153,0.25); animation-delay: -2.5s; }
+  @keyframes float { 0%{transform:translateY(0)} 100%{transform:translateY(-6px)} }
+
+  /* STATS row */
+  .hero-stats {
+    display: flex; gap: 32px; padding: 20px 36px;
+    background: var(--surface); border-radius: 16px; border: 1px solid var(--border);
+  }
+  .stat { text-align: center; }
+  .stat-num { font-family: 'Syne', sans-serif; font-size: 26px; font-weight: 800;
+    background: linear-gradient(135deg, var(--accent), var(--s)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+  .stat-lbl { font-size: 12px; color: var(--muted); margin-top: 2px; }
+  .stat-sep { width: 1px; background: var(--border); align-self: stretch; }
+
+  /* ========== QUIZ PAGE ========== */
+  #page-quiz {
+    position: relative; z-index: 1;
+  }
+  .quiz-wrap {
+    flex: 1; display: flex; flex-direction: column; align-items: center;
+    padding: 40px 20px; gap: 24px; max-width: 720px; margin: 0 auto; width: 100%;
+  }
+
+  /* Progress */
+  .quiz-progress-wrap { width: 100%; }
+  .progress-top {
+    display: flex; justify-content: space-between; align-items: center;
+    margin-bottom: 10px;
+  }
+  .progress-label { font-size: 13px; color: var(--muted); }
+  .progress-count { font-family: 'Syne', sans-serif; font-size: 20px; font-weight: 700; }
+  .progress-bar-bg {
+    height: 6px; background: var(--surface2); border-radius: 3px; overflow: hidden;
+  }
+  .progress-bar-fill {
+    height: 100%; border-radius: 3px;
+    background: linear-gradient(90deg, var(--accent), var(--accent2));
+    transition: width 0.5s cubic-bezier(0.4,0,0.2,1);
+  }
+
+  /* Section header */
+  .quiz-section-header {
+    text-align: center; padding: 16px 24px; border-radius: 12px;
+    border: 1px solid var(--border); width: 100%;
+    display: flex; align-items: center; gap: 14px;
+  }
+  .section-icon {
+    width: 44px; height: 44px; border-radius: 12px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 22px; flex-shrink: 0;
+  }
+  .section-info { text-align: left; }
+  .section-info h3 { font-family: 'Syne', sans-serif; font-size: 15px; font-weight: 700; }
+  .section-info p { font-size: 12px; color: var(--muted); margin-top: 2px; }
+
+  /* Card question */
+  .quiz-card {
+    width: 100%; background: var(--surface);
+    border: 1px solid var(--border); border-radius: 20px;
+    overflow: hidden;
+    animation: slideIn 0.35s cubic-bezier(0.4,0,0.2,1);
+  }
+  @keyframes slideIn { from{opacity:0;transform:translateY(18px)} to{opacity:1;transform:translateY(0)} }
+
+  .quiz-card-header {
+    padding: 24px 28px 16px;
+    border-bottom: 1px solid var(--border);
+  }
+  .q-num { font-size: 11px; font-weight: 600; letter-spacing: 1.5px; text-transform: uppercase; margin-bottom: 10px; }
+  .q-text {
+    font-family: 'Syne', sans-serif; font-size: 20px; font-weight: 700; line-height: 1.35;
+  }
+
+  /* Likert options */
+  .likert-row {
+    display: grid; grid-template-columns: repeat(5, 1fr);
+    gap: 8px; padding: 20px 28px;
+  }
+  .likert-label-row {
+    display: flex; justify-content: space-between;
+    padding: 0 28px 20px;
+    font-size: 11px; color: var(--muted);
+  }
+  .likert-btn {
+    display: flex; flex-direction: column; align-items: center; gap: 6px;
+    padding: 14px 8px; border-radius: 12px;
+    border: 1.5px solid var(--border); background: var(--surface2);
+    cursor: pointer; transition: all 0.2s; color: var(--muted);
+  }
+  .likert-btn:hover { border-color: rgba(255,255,255,0.2); color: var(--text); transform: translateY(-2px); }
+  .likert-btn.selected { color: var(--text); transform: translateY(-2px); }
+  .likert-btn .lk-num { font-family: 'Syne', sans-serif; font-size: 20px; font-weight: 800; }
+  .likert-btn .lk-dot {
+    width: 6px; height: 6px; border-radius: 50%;
+    background: currentColor; transition: transform 0.2s;
+  }
+  .likert-btn.selected .lk-dot { transform: scale(1.5); }
+
+  /* Likert colors by value */
+  .likert-btn[data-val="1"].selected { border-color: var(--r); background: var(--r-soft); color: var(--r); }
+  .likert-btn[data-val="2"].selected { border-color: var(--i); background: var(--i-soft); color: var(--i); }
+  .likert-btn[data-val="3"].selected { border-color: var(--muted); background: var(--surface2); color: var(--text); }
+  .likert-btn[data-val="4"].selected { border-color: var(--s); background: var(--s-soft); color: var(--s); }
+  .likert-btn[data-val="5"].selected { border-color: var(--c); background: var(--c-soft); color: var(--c); }
+
+  /* Nav buttons */
+  .quiz-nav {
+    display: flex; gap: 12px; width: 100%; justify-content: space-between; align-items: center;
+    flex-wrap: wrap;
+  }
+  .quiz-nav-actions {
+    display: flex; gap: 10px; width: 100%; justify-content: space-between;
+  }
+  .btn-back {
+    padding: 12px 24px; border-radius: 24px; border: 1px solid var(--border);
+    background: transparent; color: var(--muted); cursor: pointer;
+    font-family: 'Plus Jakarta Sans', sans-serif; font-size: 14px; transition: all 0.2s;
+  }
+  .btn-back:hover { color: var(--text); border-color: rgba(255,255,255,0.2); }
+  .btn-next {
+    padding: 12px 28px; border-radius: 24px; border: none;
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    color: #fff; cursor: pointer; font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 14px; font-weight: 600; transition: all 0.25s;
+    opacity: 0.5; pointer-events: none;
+    box-shadow: 0 0 20px rgba(123,97,255,0.25);
+  }
+  .btn-next.enabled { opacity: 1; pointer-events: all; }
+  .btn-next.enabled:hover { transform: translateY(-1px); box-shadow: 0 0 30px rgba(123,97,255,0.4); }
+
+  /* Mini RIASEC score pills */
+  .live-scores {
+    display: flex; gap: 8px; flex-wrap: wrap; justify-content: center;
+    width: 100%;
+  }
+  .score-pill {
+    display: flex; align-items: center; gap: 6px;
+    padding: 6px 12px; border-radius: 20px;
+    font-size: 12px; font-weight: 600; background: var(--surface2);
+    border: 1px solid var(--border); transition: all 0.3s;
+  }
+  .score-pill .pill-bar {
+    width: 32px; height: 4px; border-radius: 2px; background: var(--border); overflow: hidden;
+  }
+  .score-pill .pill-fill { height: 100%; border-radius: 2px; transition: width 0.5s; }
+
+  /* ========== RESULT PAGE ========== */
+  #page-result {
+    position: relative; z-index: 1; overflow-y: auto;
+  }
+  .result-wrap {
+    max-width: 900px; margin: 0 auto; padding: 40px 20px; width: 100%;
+  }
+
+  .result-hero {
+    text-align: center; margin-bottom: 40px;
+  }
+  .result-hero h2 {
+    font-size: clamp(26px, 4vw, 40px); font-weight: 800; margin-bottom: 10px;
+  }
+  .result-type-badge {
+    display: inline-flex; align-items: center; gap: 10px;
+    padding: 10px 22px; border-radius: 28px;
+    font-family: 'Syne', sans-serif; font-size: 15px; font-weight: 700;
+    margin-bottom: 14px;
+  }
+  .result-hero p { color: var(--muted); font-size: 15px; max-width: 480px; margin: 0 auto; }
+
+  .result-grid {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 28px;
+  }
+  @media(max-width:640px) { .result-grid { grid-template-columns: 1fr; } }
+
+  .result-card {
+    background: var(--surface); border: 1px solid var(--border); border-radius: 18px;
+    padding: 24px;
+  }
+  .result-card h3 {
+    font-family: 'Syne', sans-serif; font-size: 14px; font-weight: 700;
+    color: var(--muted); letter-spacing: 1px; text-transform: uppercase;
+    margin-bottom: 16px;
+  }
+
+  /* Radar chart container */
+  .chart-container { position: relative; height: 280px; }
+
+  /* Score bars */
+  .score-bars { display: flex; flex-direction: column; gap: 12px; }
+  .score-bar-item { display: flex; align-items: center; gap: 12px; }
+  .sbi-label {
+    width: 24px; height: 24px; border-radius: 6px;
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'Syne', sans-serif; font-size: 12px; font-weight: 800; flex-shrink: 0;
+  }
+  .sbi-name { font-size: 13px; min-width: 80px; }
+  .sbi-bar-bg {
+    flex: 1; height: 8px; background: var(--surface2); border-radius: 4px; overflow: hidden;
+  }
+  .sbi-bar-fill { height: 100%; border-radius: 4px; transition: width 1s cubic-bezier(0.4,0,0.2,1); }
+  .sbi-score { font-family: 'Syne', sans-serif; font-size: 13px; font-weight: 700; min-width: 30px; text-align: right; }
+
+  /* Career cards */
+  .careers-grid {
+    display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 12px;
+    margin-bottom: 28px;
+  }
+  .career-card {
+    background: var(--surface); border: 1px solid var(--border); border-radius: 14px;
+    padding: 18px; transition: all 0.2s; cursor: default;
+  }
+  .career-card strong { color: var(--text); }
+  .career-card:hover { transform: translateY(-3px); border-color: rgba(255,255,255,0.15); }
+  .career-icon { font-size: 28px; margin-bottom: 10px; }
+  .career-title { font-family: 'Syne', sans-serif; font-size: 14px; font-weight: 700; margin-bottom: 4px; }
+  .career-match {
+    font-size: 11px; font-weight: 600; padding: 3px 8px; border-radius: 10px;
+    display: inline-block;
+  }
+  .match-high { background: var(--c-soft); color: var(--c); }
+  .match-med { background: var(--i-soft); color: var(--i); }
+  .match-low { background: var(--s-soft); color: var(--s); }
+  .match-poor { background: var(--e-soft); color: var(--e); }
+
+  /* Trait tags */
+  .traits-wrap { display: flex; flex-wrap: wrap; gap: 8px; }
+  .trait-tag {
+    padding: 6px 14px; border-radius: 20px; font-size: 12px; font-weight: 500;
+    background: var(--surface2); border: 1px solid var(--border); color: var(--muted);
+  }
+
+  /* CTA section */
+  .result-cta {
+    display: flex; gap: 12px; justify-content: center; margin-top: 12px; flex-wrap: wrap;
+  }
+  .btn-share {
+    padding: 12px 24px; border-radius: 24px; border: 1px solid var(--border);
+    background: var(--surface); color: var(--muted); cursor: pointer;
+    font-family: 'Plus Jakarta Sans', sans-serif; font-size: 14px; transition: all 0.2s;
+  }
+  .btn-share:hover { border-color: rgba(255,255,255,0.2); color: var(--text); }
+  .btn-retake {
+    padding: 12px 24px; border-radius: 24px;
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    border: none; color: #fff; cursor: pointer;
+    font-family: 'Plus Jakarta Sans', sans-serif; font-size: 14px; font-weight: 600; transition: all 0.2s;
+  }
+  .btn-retake:hover { transform: translateY(-1px); }
+
+  /* ========== CONSENT PAGE ========== */
+  .consent-wrap {
+    position: relative; z-index: 1; flex: 1;
+    display: flex; flex-direction: column; align-items: center;
+    padding: 60px 24px 80px; gap: 8px;
+  }
+  .consent-box {
+    width: 100%; max-width: 640px;
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 20px; padding: 40px 36px;
+  }
+  .consent-box h1 {
+    font-size: 28px; font-weight: 800; letter-spacing: -0.5px; margin-bottom: 4px;
+  }
+  .consent-box .consent-sub {
+    color: var(--muted); font-size: 14px; margin-bottom: 28px;
+  }
+  .consent-box h3 {
+    font-size: 15px; font-weight: 700; margin: 24px 0 10px;
+    color: var(--text);
+  }
+  .consent-box h3:first-of-type { margin-top: 0; }
+  .consent-box p, .consent-box li {
+    font-size: 14.5px; line-height: 1.7; color: var(--muted);
+  }
+  .consent-box ul { padding-left: 20px; margin: 6px 0; }
+  .consent-box li { margin-bottom: 6px; }
+  .consent-box li strong { color: var(--text); }
+  .consent-minor-note {
+    margin-top: 22px; padding: 14px 16px; border-radius: 12px;
+    background: var(--a-soft); border: 1px solid rgba(199,125,255,0.25);
+    font-size: 13.5px; color: var(--text); line-height: 1.6;
+  }
+  .consent-contact {
+    margin-top: 22px; padding: 14px 16px; border-radius: 12px;
+    background: var(--surface2); border: 1px solid var(--border);
+    font-size: 13.5px; color: var(--muted); line-height: 1.6;
+  }
+  .consent-contact strong { color: var(--text); }
+  .consent-agree {
+    display: flex; align-items: flex-start; gap: 12px;
+    margin-top: 28px; padding-top: 24px; border-top: 1px solid var(--border);
+    cursor: pointer;
+  }
+  .consent-agree input[type="checkbox"] {
+    appearance: none; -webkit-appearance: none;
+    width: 20px; height: 20px; flex-shrink: 0; margin-top: 2px;
+    border: 1.5px solid var(--border); border-radius: 6px;
+    background: var(--surface2); cursor: pointer; position: relative;
+    transition: all 0.2s;
+  }
+  .consent-agree input[type="checkbox"]:checked {
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    border-color: transparent;
+  }
+  .consent-agree input[type="checkbox"]:checked::after {
+    content: '✓'; position: absolute; inset: 0;
+    display: flex; align-items: center; justify-content: center;
+    color: #fff; font-size: 13px; font-weight: 700;
+  }
+  .consent-agree span { font-size: 14px; color: var(--text); line-height: 1.6; }
+  .consent-cta {
+    display: flex; gap: 12px; flex-wrap: wrap; margin-top: 28px;
+  }
+  .btn-primary:disabled {
+    opacity: 0.4; cursor: not-allowed; box-shadow: none; transform: none;
+  }
+  @media(max-width:700px){
+    .consent-box { padding: 28px 22px; border-radius: 16px; }
+    .consent-box h1 { font-size: 22px; }
+    .consent-cta { flex-direction: column; }
+    .consent-cta button { width: 100%; }
+  }
+
+  /* ========== FEEDBACK BOX ========== */
+  .feedback-box {
+    max-width: 520px; margin: 16px auto 0; padding: 20px 22px;
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 16px; text-align: left;
+  }
+  .feedback-box .fb-title { font-size: 14.5px; font-weight: 700; color: var(--text); margin-bottom: 14px; }
+  .fb-row { margin-bottom: 16px; }
+  .fb-row label { display: block; font-size: 13px; color: var(--muted); margin-bottom: 8px; }
+  .fb-rating { display: flex; gap: 6px; }
+  .fb-rating button {
+    width: 36px; height: 36px; border-radius: 10px;
+    border: 1px solid var(--border); background: var(--surface2);
+    color: var(--muted); font-size: 14px; font-weight: 700; cursor: pointer;
+    transition: all 0.15s;
+  }
+  .fb-rating button.active {
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    color: #fff; border-color: transparent;
+  }
+  .feedback-box textarea {
+    width: 100%; padding: 12px 14px; border-radius: 10px;
+    background: var(--surface2); border: 1px solid var(--border);
+    color: var(--text); font-size: 13.5px; font-family: inherit;
+    outline: none; resize: vertical; min-height: 70px;
+  }
+  .feedback-box textarea:focus { border-color: var(--accent); }
+  .feedback-sent-note { font-size: 12px; color: var(--muted); margin-top: 4px; }
+
+  /* ========== EMAIL RESULT BOX ========== */
+  .email-result-box {
+    max-width: 520px; margin: 28px auto 0; padding: 20px 22px;
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 16px; text-align: left;
+  }
+  .email-result-box .er-title { font-size: 14.5px; font-weight: 700; color: var(--text); margin-bottom: 4px; }
+  .email-result-box .er-hint { font-size: 12.5px; color: var(--muted); margin-bottom: 14px; line-height: 1.5; }
+  .email-result-row { display: flex; gap: 10px; flex-wrap: wrap; }
+  .email-result-row input[type="email"] {
+    flex: 1; min-width: 180px; padding: 11px 14px; border-radius: 10px;
+    background: var(--surface2); border: 1px solid var(--border);
+    color: var(--text); font-size: 14px; font-family: inherit; outline: none;
+  }
+  .email-result-row input[type="email"]:focus { border-color: var(--accent); }
+  .email-result-status { font-size: 12.5px; margin-top: 10px; }
+  .email-result-status.success { color: #6ee7a0; }
+  .email-result-status.error { color: #ff8a8a; }
+
+  /* ========== PROFILE PAGE ========== */
+  .profile-box { width: 100%; max-width: 640px; background: var(--surface); border: 1px solid var(--border); border-radius: 20px; padding: 40px 36px; }
+  .profile-box h1 { font-size: 28px; font-weight: 800; letter-spacing: -0.5px; margin-bottom: 4px; }
+  .profile-box .consent-sub { color: var(--muted); font-size: 14px; margin-bottom: 28px; }
+  .field-group { margin-bottom: 20px; }
+  .field-group label { display: block; font-size: 13.5px; font-weight: 600; color: var(--text); margin-bottom: 6px; }
+  .field-group .field-hint { font-size: 12.5px; color: var(--muted); margin-top: 5px; line-height: 1.5; }
+  .field-group input[type="text"], .field-group input[type="number"], .field-group select {
+    width: 100%; padding: 12px 14px; border-radius: 10px;
+    background: var(--surface2); border: 1px solid var(--border);
+    color: var(--text); font-size: 14.5px; font-family: inherit;
+    outline: none; transition: border-color 0.2s;
+  }
+  .field-group input:focus, .field-group select:focus { border-color: var(--accent); }
+  .field-group select { appearance: none; cursor: pointer; }
+  .field-optional-tag {
+    display: inline-block; font-size: 11px; font-weight: 600; color: var(--accent2);
+    background: var(--a-soft); padding: 2px 8px; border-radius: 6px; margin-left: 8px;
+  }
+  .conditional-field { display: none; }
+  .conditional-field.show { display: block; }
+  @media(max-width:700px){ .profile-box { padding: 28px 22px; border-radius: 16px; } .profile-box h1 { font-size: 22px; } }
+
+  /* ========== ADMIN PAGE ========== */
+  #page-admin {
+    position: relative; z-index: 1; overflow-y: auto;
+  }
+  .admin-wrap {
+    max-width: 1100px; margin: 0 auto; padding: 32px 20px; width: 100%;
+  }
+  .admin-header {
+    display: flex; align-items: center; justify-content: space-between;
+    margin-bottom: 28px; flex-wrap: wrap; gap: 16px;
+  }
+  .admin-header h2 {
+    font-family: 'Syne', sans-serif; font-size: 24px; font-weight: 800;
+  }
+  .admin-badge {
+    padding: 6px 14px; border-radius: 20px; font-size: 12px;
+    background: rgba(128,237,153,0.12); color: var(--c); border: 1px solid rgba(128,237,153,0.25);
+    font-weight: 600;
+  }
+  .admin-stats-grid {
+    display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 28px;
+  }
+  @media(max-width:700px){ .admin-stats-grid { grid-template-columns: repeat(2,1fr); } }
+  .admin-stat-card {
+    background: var(--surface); border: 1px solid var(--border); border-radius: 14px;
+    padding: 18px 20px;
+  }
+  .admin-stat-card .label { font-size: 12px; color: var(--muted); margin-bottom: 8px; }
+  .admin-stat-card .value {
+    font-family: 'Syne', sans-serif; font-size: 28px; font-weight: 800;
+  }
+  .admin-stat-card .delta { font-size: 12px; margin-top: 4px; }
+  .delta-up { color: var(--c); }
+  .delta-down { color: var(--r); }
+
+  .admin-row { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 24px; }
+  @media(max-width:700px){ .admin-row { grid-template-columns: 1fr; } }
+  .admin-card {
+    background: var(--surface); border: 1px solid var(--border); border-radius: 16px;
+    padding: 22px;
+  }
+  .admin-card h3 {
+    font-family: 'Syne', sans-serif; font-size: 14px; font-weight: 700;
+    color: var(--muted); letter-spacing: 1px; text-transform: uppercase; margin-bottom: 18px;
+  }
+  .chart-container-sm { position: relative; height: 200px; }
+  .chart-container-md { position: relative; height: 240px; }
+
+  /* Table */
+  .data-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  .data-table th {
+    text-align: left; padding: 10px 12px;
+    color: var(--muted); font-weight: 600; letter-spacing: 0.5px; font-size: 11px; text-transform: uppercase;
+    border-bottom: 1px solid var(--border);
+  }
+  .data-table td {
+    padding: 12px; border-bottom: 1px solid rgba(255,255,255,0.04);
+  }
+  .data-table tr:hover td { background: var(--surface2); }
+  .table-code { font-family: monospace; font-size: 12px; color: var(--accent); }
+  .table-badge {
+    padding: 3px 8px; border-radius: 8px; font-size: 11px; font-weight: 600;
+  }
+  .filter-row { display: flex; gap: 8px; margin-bottom: 14px; flex-wrap: wrap; }
+  .filter-btn {
+    padding: 6px 14px; border-radius: 16px; border: 1px solid var(--border);
+    background: var(--surface2); color: var(--muted); cursor: pointer;
+    font-size: 12px; font-family: 'Plus Jakarta Sans', sans-serif; transition: all 0.2s;
+  }
+  .filter-btn:hover, .filter-btn.active { border-color: var(--accent); color: var(--accent); }
+  .search-box {
+    padding: 8px 14px; border-radius: 10px; border: 1px solid var(--border);
+    background: var(--surface2); color: var(--text); font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 13px; outline: none; transition: border 0.2s; width: 180px;
+  }
+  .search-box:focus { border-color: rgba(255,255,255,0.25); }
+  .export-btn {
+    margin-left: auto; padding: 8px 18px; border-radius: 10px;
+    background: var(--c-soft); border: 1px solid rgba(128,237,153,0.25);
+    color: var(--c); font-family: 'Plus Jakarta Sans', sans-serif; font-size: 13px;
+    font-weight: 600; cursor: pointer; transition: all 0.2s;
+  }
+  .export-btn:hover { background: rgba(128,237,153,0.22); }
+
+  /* Distribution bars */
+  .dist-bar-item {
+    display: flex; align-items: center; gap: 10px; margin-bottom: 10px;
+  }
+  .dist-label { font-size: 13px; font-weight: 600; width: 24px; flex-shrink: 0; }
+  .dist-bar-bg { flex: 1; height: 10px; background: var(--surface2); border-radius: 5px; overflow: hidden; }
+  .dist-bar-fill { height: 100%; border-radius: 5px; transition: width 1s; }
+  .dist-pct { font-size: 12px; color: var(--muted); min-width: 32px; text-align: right; }
+
+  /* Login overlay */
+  #admin-login {
+    position: fixed; inset: 0; z-index: 100;
+    background: rgba(13,13,26,0.95); backdrop-filter: blur(16px);
+    display: flex; align-items: center; justify-content: center;
+  }
+  .login-box {
+    background: var(--surface); border: 1px solid var(--border); border-radius: 20px;
+    padding: 40px; max-width: 380px; width: 90%; text-align: center;
+  }
+  .login-box h2 { font-family: 'Syne', sans-serif; font-size: 22px; font-weight: 800; margin-bottom: 6px; }
+  .login-box p { color: var(--muted); font-size: 14px; margin-bottom: 24px; }
+  .login-field {
+    width: 100%; padding: 12px 16px; border-radius: 12px;
+    border: 1px solid var(--border); background: var(--surface2);
+    color: var(--text); font-family: 'Plus Jakarta Sans', sans-serif; font-size: 14px;
+    outline: none; margin-bottom: 12px; transition: border 0.2s;
+  }
+  .login-field:focus { border-color: rgba(255,255,255,0.25); }
+  .login-btn {
+    width: 100%; padding: 13px; border-radius: 12px;
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    border: none; color: #fff; font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 15px; font-weight: 600; cursor: pointer; transition: opacity 0.2s;
+  }
+  .login-btn:hover { opacity: 0.9; }
+  .login-hint { font-size: 11px; color: var(--muted); margin-top: 10px; }
+
+  /* ========== MOBILE FIRST ========== */
+
+  /* Touch targets minimum 44px */
+  button { min-height: 44px; }
+  .likert-btn { min-height: 56px; }
+
+  @media(max-width:480px){
+    /* NAV: hanya brand + 1 aksi */
+    nav { padding: 14px 16px; }
+    .nav-links .nav-btn.active { display: none; }
+    .nav-links { gap: 6px; }
+    .nav-btn { padding: 8px 12px; font-size: 13px; }
+    .nav-btn.primary { padding: 8px 14px; }
+
+    /* HERO */
+    .hero { padding: 32px 16px; gap: 20px; }
+    .hero h1 { font-size: 32px; letter-spacing: -1px; }
+    .hero-sub { font-size: 15px; }
+    .hero-badge { font-size: 12px; padding: 7px 14px; }
+    .btn-primary, .btn-ghost { width: 100%; padding: 15px 20px; font-size: 15px; }
+    .hero-cta { flex-direction: column; width: 100%; }
+    .hero-stats {
+      gap: 0; padding: 0; background: none; border: none;
+      display: grid; grid-template-columns: 1fr 1fr; gap: 10px; width: 100%;
+    }
+    .stat-sep { display: none; }
+    .stat {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: 12px; padding: 12px; text-align: center;
+    }
+    .stat-num { font-size: 22px; }
+    .riasec-chips { gap: 8px; }
+    .chip { font-size: 12px; padding: 6px 12px; }
+
+    /* QUIZ */
+    .quiz-wrap { padding: 20px 14px; gap: 16px; }
+    .progress-label { font-size: 11px; max-width: 160px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .progress-count { font-size: 16px; }
+    .quiz-section-header { padding: 12px 14px; gap: 10px; }
+    .section-icon { width: 36px; height: 36px; font-size: 18px; }
+    .section-info h3 { font-size: 14px; }
+    .section-info p { font-size: 11px; }
+    .quiz-card-header { padding: 18px 16px 14px; }
+    .q-text { font-size: 16px; }
+    .likert-row { gap: 5px; padding: 14px 12px; }
+    .likert-label-row { padding: 0 12px 14px; font-size: 10px; }
+    .likert-btn { padding: 10px 4px; border-radius: 10px; min-height: 60px; }
+    .likert-btn .lk-num { font-size: 18px; }
+    .likert-btn .lk-dot { width: 5px; height: 5px; }
+
+    /* Quiz nav: back/next side by side, scores on top */
+    .quiz-nav { flex-direction: column; gap: 10px; }
+    .quiz-nav-actions { width: 100%; }
+    .live-scores {
+      width: 100%;
+      display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px;
+    }
+    .score-pill { justify-content: center; padding: 5px 8px; }
+    .score-pill .pill-bar { display: none; }
+    .btn-back { flex: 1; min-width: 80px; padding: 12px 16px; font-size: 13px; }
+    .btn-next { flex: 2; padding: 12px 16px; font-size: 14px; }
+
+    /* RESULT */
+    .result-wrap { padding: 24px 14px; }
+    .result-hero { margin-bottom: 24px; }
+    .result-hero h2 { font-size: 22px; }
+    .result-type-badge { font-size: 13px; padding: 8px 16px; }
+    .result-hero p { font-size: 14px; }
+    .result-grid { grid-template-columns: 1fr; gap: 14px; margin-bottom: 14px; }
+    .result-card { padding: 18px 14px; border-radius: 14px; }
+    .chart-container { height: 240px; }
+    .sbi-name { font-size: 12px; min-width: 70px; }
+    .careers-grid { grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 14px; }
+    .career-card { padding: 14px; }
+    .career-icon { font-size: 22px; margin-bottom: 8px; }
+    .career-title { font-size: 13px; }
+    .result-cta { flex-direction: column; }
+    .btn-share, .btn-retake { width: 100%; text-align: center; padding: 14px; }
+
+    /* ADMIN */
+    .admin-wrap { padding: 20px 14px; }
+    .admin-header { margin-bottom: 20px; }
+    .admin-header h2 { font-size: 20px; }
+    .admin-stats-grid { grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 20px; }
+    .admin-stat-card { padding: 14px; }
+    .admin-stat-card .value { font-size: 22px; }
+    .admin-row { grid-template-columns: 1fr; gap: 14px; margin-bottom: 14px; }
+    .admin-card { padding: 16px 14px; }
+    .filter-row { gap: 6px; }
+    .search-box { width: 100%; }
+    .filter-btn { font-size: 11px; padding: 5px 10px; }
+    .export-btn { margin-left: 0; width: 100%; text-align: center; margin-top: 4px; }
+
+    /* LOGIN */
+    .login-box { padding: 28px 20px; }
+  }
+
+  @media(max-width:380px){
+    .hero h1 { font-size: 26px; }
+    .careers-grid { grid-template-columns: 1fr; }
+    .likert-btn .lk-num { font-size: 15px; }
+  }
+
+  /* Tablets 481-768 */
+  @media(min-width:481px) and (max-width:768px){
+    nav { padding: 16px 24px; }
+    .hero { padding: 48px 24px; gap: 22px; }
+    .hero h1 { font-size: 42px; }
+    .hero-stats { gap: 20px; padding: 16px 24px; }
+    .quiz-wrap { padding: 28px 20px; gap: 18px; }
+    .likert-row { gap: 7px; padding: 16px 20px; }
+    .likert-btn .lk-num { font-size: 18px; }
+    .live-scores { width: 100%; }
+    .result-wrap { padding: 28px 20px; }
+    .admin-wrap { padding: 24px 20px; }
+    .admin-row { grid-template-columns: 1fr; }
+  }
+
+.result-note{margin:1rem 0;padding:.9rem 1rem;border:1px solid rgba(0,0,0,.12);border-radius:12px;font-size:.9rem;line-height:1.5}
+</style>
+</head>
+<body>
+<div class="bg-orbs">
+  <div class="orb orb1"></div>
+  <div class="orb orb2"></div>
+  <div class="orb orb3"></div>
+</div>
+
+<!-- ========== PAGE: LANDING ========== -->
+<div id="page-home" class="page active">
+  <nav>
+    <div class="brand">Karir<span>Ku</span></div>
+    <div class="nav-links">
+      <button class="nav-btn active" onclick="goPage('home')">Beranda</button>
+      <button class="nav-btn" onclick="goPage('admin')">Admin</button>
+      <button class="nav-btn primary" onclick="goPage('consent')">Mulai Tes →</button>
+    </div>
+  </nav>
+  <div class="hero">
+    <div class="hero-badge"><span class="dot"></span> Berbasis Metodologi RIASEC Holland</div>
+    <h1>Temukan <span class="highlight">Jalur Karir</span><br>yang Tepat Untukmu</h1>
+    <p class="hero-sub">Tes minat karier 42 soal — kenali kekuatanmu dan dapatkan rekomendasi profesi yang sesuai.</p>
+    <div class="riasec-chips">
+      <span class="chip R">Realistic</span>
+      <span class="chip I">Investigative</span>
+      <span class="chip A">Artistic</span>
+      <span class="chip S">Social</span>
+      <span class="chip E">Enterprising</span>
+      <span class="chip C">Conventional</span>
+    </div>
+    <div class="hero-cta">
+      <button class="btn-primary" onclick="goPage('consent')">Mulai Tes Sekarang ✦</button>
+      <button class="btn-ghost" onclick="scrollInfo()">Pelajari RIASEC</button>
+    </div>
+    <div class="hero-stats">
+      <div class="stat"><div class="stat-num">42</div><div class="stat-lbl">Soal</div></div>
+      <div class="stat-sep"></div>
+      <div class="stat"><div class="stat-num">~8</div><div class="stat-lbl">Menit</div></div>
+      <div class="stat-sep"></div>
+      <div class="stat"><div class="stat-num">36</div><div class="stat-lbl">Profesi referensi</div></div>
+      <div class="stat-sep"></div>
+      <div class="stat"><div class="stat-num">6</div><div class="stat-lbl">Tipe</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- ========== PAGE: CONSENT ========== -->
+<div id="page-consent" class="page">
+  <nav>
+    <div class="brand">Karir<span>Ku</span></div>
+    <div class="nav-links">
+      <button class="nav-btn" onclick="goPage('home')">← Beranda</button>
+    </div>
+  </nav>
+  <div class="consent-wrap">
+    <div class="consent-box">
+      <h1>Persetujuan Partisipasi</h1>
+      <p class="consent-sub">Mohon baca sebelum memulai kuesioner eksplorasi minat karier KarirKu.</p>
+
+      <h3>Tentang Kuesioner Ini</h3>
+      <p>Kuesioner ini bertujuan membantu kamu mengenali keselarasan profil minat berdasarkan minat dan kepribadian, menggunakan model RIASEC (Holland Code). Selain sebagai alat bantu pribadi, jawabanmu juga digunakan untuk <strong style="color:var(--text)">keperluan riset dan analisis data</strong> terkait minat karir siswa SMA dan mahasiswa tingkat awal.</p>
+
+      <h3>Yang Perlu Kamu Ketahui</h3>
+      <ul>
+        <li><strong>Bersifat sukarela</strong> — kamu boleh berhenti kapan saja tanpa konsekuensi.</li>
+        <li><strong>Waktu pengisian</strong> sekitar 10–15 menit (42 pertanyaan).</li>
+        <li><strong>Kerahasiaan data</strong> — jawabanmu disimpan secara anonim untuk analisis, tidak dipublikasikan ke pihak luar di luar keperluan riset ini.</li>
+        <li><strong>Tidak ada jawaban benar/salah</strong> — jawab sejujurnya agar hasil lebih akurat.</li>
+        <li><strong>Data yang direkam</strong>: informasi dasar (usia, jenjang pendidikan, asal sekolah/kampus), jawaban kuesioner, hasil skor, dan tanggapan singkat setelah melihat hasil.</li>
+      </ul>
+
+      <div class="consent-minor-note">
+        <strong>Untuk peserta di bawah 18 tahun:</strong> dengan mencentang kotak persetujuan di bawah, kamu menyatakan sudah mendapat izin dari orang tua/wali untuk mengikuti kuesioner ini.
+      </div>
+
+      <div class="consent-contact">
+        Ada pertanyaan atau ingin data yang sudah dikirim dihapus dari hasil riset? Hubungi <strong>[Nama/Institusi] — [email kontak]</strong>.
+      </div>
+
+      <label class="consent-agree">
+        <input type="checkbox" id="consent-check" onchange="toggleConsentBtn()">
+        <span>Saya telah membaca dan memahami informasi di atas, serta setuju untuk berpartisipasi dalam kuesioner ini secara sukarela.</span>
+      </label>
+
+      <div class="consent-cta">
+        <button class="btn-primary" id="consent-btn" disabled onclick="goPage('profile')">Mulai Kuesioner ✦</button>
+        <button class="btn-ghost" onclick="goPage('home')">Batal</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ========== PAGE: PROFILE ========== -->
+<div id="page-profile" class="page">
+  <nav>
+    <div class="brand">Karir<span>Ku</span></div>
+    <div class="nav-links">
+      <button class="nav-btn" onclick="goPage('consent')">← Kembali</button>
+    </div>
+  </nav>
+  <div class="consent-wrap">
+    <div class="profile-box">
+      <h1>Sedikit tentang kamu</h1>
+      <p class="consent-sub">Informasi ini membantu kami menyesuaikan hasil dan analisis riset.</p>
+
+      <div class="field-group">
+        <label>Nama <span class="field-optional-tag">Opsional</span></label>
+        <input type="text" id="p-nama" placeholder="Nama atau inisial, misal: 'Budi' atau 'B.S.'">
+        <div class="field-hint">Boleh dikosongkan atau diisi inisial saja. Nama ini <strong style="color:var(--text)">tidak disimpan ke database</strong> — hanya dipakai untuk menyapa kamu di halaman hasil, dan akan hilang setelah kamu meninggalkan halaman ini.</div>
+      </div>
+
+      <div class="field-group">
+        <label>Usia</label>
+        <input type="number" id="p-usia" min="10" max="30" placeholder="Contoh: 17">
+      </div>
+
+      <div class="field-group">
+        <label>Status pendidikan saat ini</label>
+        <select id="p-status" onchange="updateJenjangFields()">
+          <option value="">— Pilih —</option>
+          <option value="SMA">Siswa SMA</option>
+          <option value="SMK">Siswa SMK</option>
+          <option value="Mahasiswa">Mahasiswa</option>
+        </select>
+      </div>
+
+      <div class="field-group conditional-field" id="field-kelas">
+        <label>Kelas berapa saat ini?</label>
+        <select id="p-kelas" onchange="autoSetPeminatan()">
+          <option value="">— Pilih —</option>
+          <option value="Kelas 10">Kelas 10</option>
+          <option value="Kelas 11">Kelas 11</option>
+          <option value="Kelas 12">Kelas 12</option>
+        </select>
+      </div>
+
+      <div class="field-group conditional-field" id="field-semester">
+        <label>Semester berapa saat ini?</label>
+        <select id="p-semester">
+          <option value="">— Pilih —</option>
+          <option value="Semester 1-2">Semester 1-2</option>
+          <option value="Semester 3-4">Semester 3-4</option>
+          <option value="Semester 5-6">Semester 5-6</option>
+          <option value="Semester 7-8">Semester 7-8</option>
+          <option value=">Semester 8">Lebih dari semester 8</option>
+        </select>
+      </div>
+
+      <div class="field-group conditional-field" id="field-peminatan">
+        <label>Peminatan kamu apa?</label>
+        <select id="p-peminatan">
+          <option value="">— Pilih —</option>
+          <option value="Belum ada peminatan">Belum ada peminatan (masih kelas 10 / umum)</option>
+          <option value="IPA">IPA</option>
+          <option value="IPS">IPS</option>
+          <option value="Bahasa">Bahasa</option>
+          <option value="Lainnya">Lainnya</option>
+        </select>
+      </div>
+
+      <div class="field-group conditional-field" id="field-jurusan-smk">
+        <label>Jurusan/kompetensi keahlian kamu apa?</label>
+        <input type="text" id="p-jurusan-smk" placeholder="Contoh: Teknik Komputer dan Jaringan">
+      </div>
+
+      <div class="field-group conditional-field" id="field-prodi">
+        <label>Program studi/jurusan kamu apa?</label>
+        <input type="text" id="p-prodi" placeholder="Contoh: Teknik Informatika">
+      </div>
+
+      <div class="field-group">
+        <label>Asal sekolah/kampus</label>
+        <input type="text" id="p-institusi" placeholder="Nama sekolah atau kampus">
+      </div>
+
+      <div class="field-group">
+        <label>Domisili</label>
+        <input type="text" id="p-domisili" placeholder="Kota/provinsi">
+      </div>
+
+      <div class="field-group">
+        <label>Dari mana kamu tahu kuesioner ini? <span class="field-optional-tag">Opsional</span></label>
+        <select id="p-sumber">
+          <option value="">— Pilih —</option>
+          <option value="Sekolah/Guru">Sekolah/Guru</option>
+          <option value="Media Sosial">Media Sosial</option>
+          <option value="Teman/Keluarga">Teman/Keluarga</option>
+          <option value="Lainnya">Lainnya</option>
+        </select>
+      </div>
+
+      <div class="consent-cta">
+        <button class="btn-primary" onclick="submitProfile()">Lanjut ke Kuis ✦</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ========== PAGE: QUIZ ========== -->
+<div id="page-quiz" class="page">
+  <nav>
+    <div class="brand">Karir<span>Ku</span></div>
+    <div class="nav-links">
+      <button class="nav-btn" onclick="goPage('home')">← Beranda</button>
+    </div>
+  </nav>
+  <div class="quiz-wrap">
+    <div class="quiz-progress-wrap">
+      <div class="progress-top">
+        <span class="progress-label" id="prog-label">Bagian 1 dari 6 — Realistic</span>
+        <span class="progress-count" id="prog-count">1 / 42</span>
+      </div>
+      <div class="progress-bar-bg"><div class="progress-bar-fill" id="prog-fill" style="width:2.4%"></div></div>
+    </div>
+
+    <div class="quiz-section-header" id="section-header">
+      <div class="section-icon" id="sec-icon">🔧</div>
+      <div class="section-info">
+        <h3 id="sec-name">Realistic</h3>
+        <p id="sec-desc">Suka aktivitas fisik, alat, mesin, dan bekerja di luar ruangan</p>
+      </div>
+    </div>
+
+    <div class="quiz-card" id="quiz-card">
+      <div class="quiz-card-header">
+        <div class="q-num" id="q-num">Pertanyaan 01</div>
+        <div class="q-text" id="q-text">Saya menikmati pekerjaan yang menggunakan tangan seperti memperbaiki peralatan atau membangun sesuatu.</div>
+      </div>
+      <div class="likert-row" id="likert-row">
+        <button class="likert-btn" data-val="1" onclick="selectAnswer(1)">
+          <span class="lk-num">1</span><span class="lk-dot"></span>
+        </button>
+        <button class="likert-btn" data-val="2" onclick="selectAnswer(2)">
+          <span class="lk-num">2</span><span class="lk-dot"></span>
+        </button>
+        <button class="likert-btn" data-val="3" onclick="selectAnswer(3)">
+          <span class="lk-num">3</span><span class="lk-dot"></span>
+        </button>
+        <button class="likert-btn" data-val="4" onclick="selectAnswer(4)">
+          <span class="lk-num">4</span><span class="lk-dot"></span>
+        </button>
+        <button class="likert-btn" data-val="5" onclick="selectAnswer(5)">
+          <span class="lk-num">5</span><span class="lk-dot"></span>
+        </button>
+      </div>
+      <div class="likert-label-row">
+        <span>Sangat Tidak Setuju</span>
+        <span>Sangat Setuju</span>
+      </div>
+    </div>
+
+    <div class="quiz-nav">
+      <div class="live-scores" id="live-scores"></div>
+      <div class="quiz-nav-actions">
+        <button class="btn-back" id="btn-back" onclick="prevQ()">← Kembali</button>
+        <button class="btn-next" id="btn-next" onclick="nextQ()">Lanjut →</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ========== PAGE: RESULT ========== -->
+<div id="page-result" class="page">
+<div class="result-note" role="note">
+<strong>Catatan interpretasi:</strong> Hasil ini menggambarkan keselarasan profil minat RIASEC dengan pola minat yang terkait dengan karier. Gunakan sebagai bahan eksplorasi, bukan sebagai penentu tunggal pilihan pendidikan atau karier.
+</div>
+
+  <nav>
+    <div class="brand">Karir<span>Ku</span></div>
+    <div class="nav-links">
+      <button class="nav-btn" onclick="goPage('home')">← Beranda</button>
+    </div>
+  </nav>
+  <div class="result-wrap">
+    <div class="result-hero">
+      <div class="result-type-badge" id="result-badge"></div>
+      <p id="result-greeting" style="font-size:14px;color:var(--muted);margin-bottom:4px;"></p>
+      <h2 id="result-title">Kamu adalah seorang <span id="result-type-name"></span></h2>
+      <p id="result-desc"></p>
+
+      <div class="email-result-box">
+        <div class="er-title">Kirim hasil ini ke email kamu (opsional)</div>
+        <div class="er-hint">Email hanya dipakai sekali untuk mengirim hasil ini dan <strong style="color:var(--text)">tidak disimpan</strong> di database kami.</div>
+        <div class="email-result-row">
+          <input type="email" id="result-email-input" placeholder="nama@email.com">
+          <button class="btn-primary" id="send-email-btn" onclick="sendResultEmail()">Kirim</button>
+        </div>
+        <div class="email-result-status" id="email-result-status"></div>
+      </div>
+
+      <div class="feedback-box">
+        <div class="fb-title">Bantu kami tingkatkan KarirKu</div>
+        <div class="fb-row">
+          <label>Seberapa akurat hasil ini menurutmu?</label>
+          <div class="fb-rating" id="fb-akurasi" data-value="0">
+            <button type="button" onclick="setFeedbackRating('akurasi',1)">1</button>
+            <button type="button" onclick="setFeedbackRating('akurasi',2)">2</button>
+            <button type="button" onclick="setFeedbackRating('akurasi',3)">3</button>
+            <button type="button" onclick="setFeedbackRating('akurasi',4)">4</button>
+            <button type="button" onclick="setFeedbackRating('akurasi',5)">5</button>
+          </div>
+        </div>
+        <div class="fb-row">
+          <label>Seberapa relevan rekomendasi karirnya?</label>
+          <div class="fb-rating" id="fb-relevansi" data-value="0">
+            <button type="button" onclick="setFeedbackRating('relevansi',1)">1</button>
+            <button type="button" onclick="setFeedbackRating('relevansi',2)">2</button>
+            <button type="button" onclick="setFeedbackRating('relevansi',3)">3</button>
+            <button type="button" onclick="setFeedbackRating('relevansi',4)">4</button>
+            <button type="button" onclick="setFeedbackRating('relevansi',5)">5</button>
+          </div>
+        </div>
+        <div class="fb-row">
+          <label>Komentar tambahan (opsional)</label>
+          <textarea id="fb-komentar" placeholder="Ceritakan pendapatmu..." oninput="participantFeedback.komentar = this.value"></textarea>
+        </div>
+        <div class="feedback-sent-note">Feedback ini otomatis tersimpan bersama hasil kuesionermu.</div>
+      </div>
+    </div>
+
+    <div class="result-grid">
+      <div class="result-card">
+        <h3>Profil Minat RIASEC</h3>
+        <div class="chart-container">
+          <canvas id="radarChart"></canvas>
+        </div>
+      </div>
+      <div class="result-card">
+        <h3>Skor Detail</h3>
+        <div class="score-bars" id="score-bars"></div>
+      </div>
+    </div>
+
+    <div class="result-card" style="margin-bottom:20px">
+      <h3>Rekomendasi Karir Untukmu</h3>
+      <div class="careers-grid" id="careers-grid"></div>
+    </div>
+
+    <div class="result-grid">
+      <div class="result-card">
+        <h3>Kekuatan Utama</h3>
+        <div class="traits-wrap" id="traits-wrap"></div>
+      </div>
+      <div class="result-card">
+        <h3>Lingkungan Kerja Ideal</h3>
+        <div class="traits-wrap" id="env-wrap"></div>
+      </div>
+    </div>
+
+    <div class="result-cta" style="margin-top:24px">
+      <button class="btn-share" onclick="alert('Fitur berbagi akan segera hadir!')">📤 Bagikan Hasilku</button>
+      <button class="btn-share" onclick="downloadResult()">⬇ Unduh PDF</button>
+      <button class="btn-retake" onclick="retakeQuiz()">🔄 Ulangi Tes</button>
+    </div>
+  </div>
+</div>
+
+<!-- ========== PAGE: ADMIN ========== -->
+<div id="page-admin" class="page">
+  <!-- Login overlay -->
+  <div id="admin-login">
+    <div class="login-box">
+      <div style="font-size:36px;margin-bottom:12px">🔐</div>
+      <h2>Dashboard Admin</h2>
+      <p>Masuk untuk melihat data riset dan analitik</p>
+      <input class="login-field" id="login-user" type="text" placeholder="Username" />
+      <input class="login-field" id="login-pass" type="password" placeholder="Password" />
+      <button class="login-btn" onclick="doLogin()">Masuk</button>
+      <div class="login-hint">Demo: admin / admin123</div>
+    </div>
+  </div>
+
+  <nav>
+    <div class="brand">Karir<span>Ku</span> <span style="font-size:13px;color:var(--muted);font-family:'Plus Jakarta Sans',sans-serif;font-weight:400"> — Admin</span></div>
+    <div class="nav-links">
+      <button class="nav-btn" onclick="goPage('home')">← Beranda</button>
+    </div>
+  </nav>
+  <div class="admin-wrap">
+    <div class="admin-header">
+      <div>
+        <h2>Dashboard Riset</h2>
+        <p style="color:var(--muted);font-size:13px;margin-top:4px">Data pengisian kuesioner RIASEC</p>
+      </div>
+      <div style="display:flex;gap:10px;align-items:center">
+        <div class="admin-badge">● Live</div>
+        <button class="export-btn" onclick="exportCSV()">⬇ Export CSV</button>
+      </div>
+    </div>
+
+    <!-- KPI cards -->
+    <div class="admin-stats-grid">
+      <div class="admin-stat-card">
+        <div class="label">Total Responden</div>
+        <div class="value" id="kpi-total">0</div>
+        <div class="delta delta-up">↑ +12 minggu ini</div>
+      </div>
+      <div class="admin-stat-card">
+        <div class="label">Rata-rata Waktu</div>
+        <div class="value">7.4 <span style="font-size:14px;color:var(--muted)">min</span></div>
+        <div class="delta delta-up">↑ engagement tinggi</div>
+      </div>
+      <div class="admin-stat-card">
+        <div class="label">Tipe Dominan</div>
+        <div class="value" id="kpi-dom" style="font-size:20px;">—</div>
+        <div class="delta">paling banyak dipilih</div>
+      </div>
+      <div class="admin-stat-card">
+        <div class="label">Tingkat Selesai</div>
+        <div class="value">94<span style="font-size:14px;color:var(--muted)">%</span></div>
+        <div class="delta delta-up">↑ sangat tinggi</div>
+      </div>
+    </div>
+
+    <!-- Charts row -->
+    <div class="admin-row">
+      <div class="admin-card">
+        <h3>Distribusi Tipe RIASEC</h3>
+        <div id="dist-bars"></div>
+      </div>
+      <div class="admin-card">
+        <h3>Tren Pengisian per Minggu</h3>
+        <div class="chart-container-md">
+          <canvas id="trendChart"></canvas>
+        </div>
+      </div>
+    </div>
+
+    <div class="admin-row">
+      <div class="admin-card">
+        <h3>Distribusi Usia Responden</h3>
+        <div class="chart-container-sm">
+          <canvas id="ageChart"></canvas>
+        </div>
+      </div>
+      <div class="admin-card">
+        <h3>Gender</h3>
+        <div class="chart-container-sm">
+          <canvas id="genderChart"></canvas>
+        </div>
+      </div>
+    </div>
+
+    <!-- Data table -->
+    <div class="admin-card" style="margin-bottom:20px">
+      <h3>Data Responden</h3>
+      <div class="filter-row">
+        <input class="search-box" id="search-box" placeholder="Cari nama / kode..." oninput="filterTable()"/>
+        <button class="filter-btn active" onclick="setFilter('semua',this)">Semua</button>
+        <button class="filter-btn" onclick="setFilter('R',this)">Realistic</button>
+        <button class="filter-btn" onclick="setFilter('I',this)">Investigative</button>
+        <button class="filter-btn" onclick="setFilter('A',this)">Artistic</button>
+        <button class="filter-btn" onclick="setFilter('S',this)">Social</button>
+        <button class="filter-btn" onclick="setFilter('E',this)">Enterprising</button>
+        <button class="filter-btn" onclick="setFilter('C',this)">Conventional</button>
+      </div>
+      <div style="overflow-x:auto">
+        <table class="data-table" id="data-table">
+          <thead>
+            <tr>
+              <th>Kode</th><th>Nama</th><th>Usia</th><th>Tingkat</th>
+              <th>Tipe Utama</th><th>Tipe Kedua</th><th>Skor R</th><th>Skor I</th>
+              <th>Skor A</th><th>Skor S</th><th>Skor E</th><th>Skor C</th><th>Tanggal</th>
+            </tr>
+          </thead>
+          <tbody id="table-body"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+// TODO: Ganti dengan URL Web App Apps Script setelah di-deploy
+const APPS_SCRIPT_URL = 'GANTI_DENGAN_URL_WEB_APP_APPS_SCRIPT_ANDA';
+
+// ========== DATA ==========
+const SECTIONS = [
+  { key:'R', name:'Realistic', icon:'🔧', desc:'Suka aktivitas fisik, alat, mesin, dan bekerja di luar ruangan', color:'var(--r)', fill:'var(--r-soft)' },
+  { key:'I', name:'Investigative', icon:'🔬', desc:'Suka menganalisis, meneliti, dan memecahkan masalah kompleks', color:'var(--i)', fill:'var(--i-soft)' },
+  { key:'A', name:'Artistic', icon:'🎨', desc:'Suka ekspresi kreatif, estetika, dan kebebasan berimajinasi', color:'var(--a)', fill:'var(--a-soft)' },
+  { key:'S', name:'Social', icon:'🤝', desc:'Suka membantu, mengajar, dan berinteraksi dengan orang lain', color:'var(--s)', fill:'var(--s-soft)' },
+  { key:'E', name:'Enterprising', icon:'🚀', desc:'Suka memimpin, mempengaruhi orang, dan menjalankan bisnis', color:'var(--e)', fill:'var(--e-soft)' },
+  { key:'C', name:'Conventional', icon:'📊', desc:'Suka keteraturan, data, dan prosedur yang terstruktur', color:'var(--c)', fill:'var(--c-soft)' }
+];
+
+const QUESTIONS = [
+  // R
+  { s:'R', q:'Saya menikmati pekerjaan yang menggunakan tangan seperti memperbaiki peralatan atau membangun sesuatu.' },
+  { s:'R', q:'Saya lebih suka bekerja di luar ruangan daripada di dalam kantor.' },
+  { s:'R', q:'Saya tertarik mempelajari cara kerja mesin atau peralatan teknis.' },
+  { s:'R', q:'Saya suka kegiatan yang membutuhkan keterampilan fisik atau atletik.' },
+  { s:'R', q:'Saya merasa puas ketika berhasil membuat atau memperbaiki sesuatu secara fisik.' },
+  { s:'R', q:'Saya lebih nyaman bekerja dengan benda-benda konkret daripada ide-ide abstrak.' },
+  { s:'R', q:'Saya tertarik pada bidang pertanian, kehutanan, atau konservasi alam.' },
+  // I
+  { s:'I', q:'Saya sangat suka menganalisis data dan mencari pola di dalamnya.' },
+  { s:'I', q:'Saya tertarik melakukan riset atau eksperimen untuk menemukan jawaban baru.' },
+  { s:'I', q:'Membaca artikel ilmiah atau buku pengetahuan adalah hal yang saya nikmati.' },
+  { s:'I', q:'Saya sering bertanya "mengapa" dan ingin memahami bagaimana sesuatu bekerja.' },
+  { s:'I', q:'Saya menyukai tantangan intelektual yang membutuhkan pemikiran mendalam.' },
+  { s:'I', q:'Saya tertarik pada matematika, sains, atau pemrograman komputer.' },
+  { s:'I', q:'Saya suka memecahkan teka-teki atau masalah yang kompleks.' },
+  // A
+  { s:'A', q:'Saya menikmati kegiatan kreatif seperti menggambar, menulis, atau bermain musik.' },
+  { s:'A', q:'Saya lebih suka pekerjaan yang memberi saya kebebasan berekspresi.' },
+  { s:'A', q:'Saya sangat memperhatikan estetika dan keindahan dalam kehidupan sehari-hari.' },
+  { s:'A', q:'Saya mudah terinspirasi oleh seni, sastra, film, atau pertunjukan.' },
+  { s:'A', q:'Saya suka menghasilkan sesuatu yang orisinal dan unik.' },
+  { s:'A', q:'Saya merasa lingkungan kerja yang fleksibel dan kreatif sangat penting bagi saya.' },
+  { s:'A', q:'Saya tertarik pada desain, fotografi, atau dunia fesyen.' },
+  // S
+  { s:'S', q:'Saya mendapatkan energi dari membantu orang lain mengatasi masalah mereka.' },
+  { s:'S', q:'Saya suka mengajar, melatih, atau membimbing orang lain.' },
+  { s:'S', q:'Saya sangat peduli terhadap kesejahteraan orang-orang di sekitar saya.' },
+  { s:'S', q:'Saya lebih suka bekerja dalam tim daripada bekerja sendiri.' },
+  { s:'S', q:'Saya tertarik pada bidang konseling, psikologi, atau pekerjaan sosial.' },
+  { s:'S', q:'Saya sering menjadi orang yang pertama kali ditanyai ketika teman butuh saran.' },
+  { s:'S', q:'Membuat orang lain merasa baik adalah sesuatu yang memberi saya kepuasan.' },
+  // E
+  { s:'E', q:'Saya suka memimpin proyek dan mengambil keputusan penting.' },
+  { s:'E', q:'Saya tertarik pada bisnis, kewirausahaan, dan cara menghasilkan uang.' },
+  { s:'E', q:'Saya merasa nyaman mempresentasikan ide di depan banyak orang.' },
+  { s:'E', q:'Saya suka bernegosiasi dan meyakinkan orang untuk mendukung ide saya.' },
+  { s:'E', q:'Saya bermimpi memiliki bisnis sendiri suatu hari nanti.' },
+  { s:'E', q:'Saya tertarik pada politik, hukum, atau manajemen organisasi.' },
+  { s:'E', q:'Saya merasa ambisius dan selalu ingin mencapai lebih banyak.' },
+  // C
+  { s:'C', q:'Saya suka pekerjaan yang terstruktur, jelas prosedurnya, dan memiliki standar baku.' },
+  { s:'C', q:'Saya menikmati bekerja dengan angka, tabel, dan laporan keuangan.' },
+  { s:'C', q:'Saya sangat rapi dan terorganisir dalam kehidupan sehari-hari.' },
+  { s:'C', q:'Saya tertarik pada akuntansi, administrasi, atau manajemen database.' },
+  { s:'C', q:'Saya lebih suka mengikuti prosedur yang sudah terbukti daripada mencoba hal baru.' },
+  { s:'C', q:'Saya merasa nyaman mengerjakan tugas yang detail dan memerlukan ketelitian tinggi.' },
+  { s:'C', q:'Saya suka memeriksa kembali pekerjaan saya untuk memastikan tidak ada kesalahan.' }
+];
+
+const CAREERS = [
+  {id:'career-insinyur-mesin', icon:'⚙️', title:'Insinyur Mesin', riasec:['R','I','C'], cluster:'Engineering & Technical', evidenceLevel:'DIRECT', description:'Merancang, mengembangkan, menguji, dan memperbaiki mesin serta sistem mekanik.', rationale:{R:'Bekerja dengan mesin, peralatan, dan sistem fisik.',I:'Menganalisis masalah teknis dan menerapkan prinsip rekayasa.',C:'Menggunakan spesifikasi, standar, perhitungan, dan dokumentasi teknis.'}},
+    {id:'career-teknisi-teknik-industri', icon:'🔧', title:'Teknisi Teknik Industri', riasec:['R','C','I'], cluster:'Engineering & Technical', evidenceLevel:'DIRECT', description:'Mendukung pengoperasian, pengujian, dan perbaikan proses serta sistem industri.', rationale:{R:'Berinteraksi dengan peralatan dan proses fisik.',C:'Mengikuti prosedur, standar, dan pengendalian kualitas.',I:'Menganalisis proses untuk menemukan cara kerja yang lebih baik.'}},
+    {id:'career-pilot-pesawat', icon:'✈️', title:'Pilot Pesawat', riasec:['R','C','E'], cluster:'Engineering & Technical', evidenceLevel:'DIRECT', description:'Mengoperasikan pesawat dengan mengikuti prosedur keselamatan dan membuat keputusan operasional.', rationale:{R:'Mengoperasikan sistem dan peralatan fisik.',C:'Sangat bergantung pada checklist, prosedur, dan standar keselamatan.',E:'Membutuhkan pengambilan keputusan dan koordinasi operasional.'}},
+    {id:'career-arsitek', icon:'🏛️', title:'Arsitek', riasec:['R','C','A'], cluster:'Engineering & Technical', evidenceLevel:'DIRECT', description:'Merancang bangunan dan lingkungan fisik dengan menggabungkan kebutuhan teknis dan desain.', rationale:{R:'Berhubungan dengan bangunan dan lingkungan fisik.',C:'Menggunakan standar teknis, regulasi, dan spesifikasi.',A:'Mengembangkan konsep dan solusi desain yang kreatif.'}},
+    {id:'career-ilmuwan-lingkungan', icon:'🌱', title:'Ilmuwan Lingkungan', riasec:['I','R','C'], cluster:'Science & Analytics', evidenceLevel:'DIRECT', description:'Mempelajari kondisi lingkungan dan menggunakan data ilmiah untuk memahami serta menangani masalah lingkungan.', rationale:{I:'Melakukan pengamatan, analisis, dan penelitian ilmiah.',R:'Berinteraksi dengan lingkungan dan sistem fisik.',C:'Menggunakan prosedur pengukuran, data, dan dokumentasi.'}},
+    {id:'career-insinyur-pertanian', icon:'🌾', title:'Insinyur Pertanian', riasec:['R','I'], cluster:'Engineering & Technical', evidenceLevel:'DIRECT', description:'Menerapkan prinsip teknik untuk sistem, peralatan, dan proses pertanian.', rationale:{R:'Bekerja dengan peralatan dan sistem fisik di bidang pertanian.',I:'Memecahkan masalah teknis menggunakan prinsip sains dan rekayasa.'}},
+  {id:'career-ilmuwan-biologi', icon:'🧬', title:'Ilmuwan Biologi', riasec:['I','R'], cluster:'Science & Analytics', evidenceLevel:'ADAPTED', description:'Meneliti organisme hidup, proses biologis, dan fenomena kehidupan menggunakan metode ilmiah.', rationale:{I:'Menekankan penelitian, observasi, analisis, dan pemecahan masalah ilmiah.',R:'Melibatkan kerja laboratorium, spesimen, atau lingkungan fisik.'}},
+    {id:'career-data-scientist', icon:'📊', title:'Data Scientist', riasec:['I','C'], cluster:'Science & Analytics', evidenceLevel:'DIRECT', description:'Menganalisis data, menemukan pola, dan membangun model untuk menjawab pertanyaan atau mendukung keputusan.', rationale:{I:'Menggunakan analisis, pemodelan, dan pemecahan masalah kompleks.',C:'Mengelola dataset, proses analisis, dan dokumentasi secara sistematis.'}},
+    {id:'career-astrofisikawan', icon:'🌌', title:'Astrofisikawan', riasec:['I','R','C'], cluster:'Science & Analytics', evidenceLevel:'ADAPTED', description:'Mempelajari fenomena fisik di alam semesta melalui teori, observasi, dan analisis data.', rationale:{I:'Menekankan penelitian dan penalaran ilmiah.',R:'Berhubungan dengan sistem dan fenomena fisik.',C:'Membutuhkan analisis data, perhitungan, dan dokumentasi sistematis.'}},
+    {id:'career-kimiawan', icon:'⚗️', title:'Kimiawan', riasec:['I','R','C'], cluster:'Science & Analytics', evidenceLevel:'DIRECT', description:'Mempelajari komposisi, sifat, dan perubahan materi melalui eksperimen dan analisis.', rationale:{I:'Melakukan penelitian dan pemecahan masalah ilmiah.',R:'Melakukan eksperimen dan bekerja dengan bahan serta peralatan.',C:'Mengikuti prosedur laboratorium dan mencatat hasil secara sistematis.'}},
+    {id:'career-ai-engineer', icon:'🤖', title:'AI Engineer', riasec:['I','R','C'], cluster:'Technology & Digital Design', evidenceLevel:'PROXY', description:'Mengembangkan dan menerapkan sistem kecerdasan buatan untuk menyelesaikan masalah teknis.', rationale:{I:'Memerlukan analisis, pemodelan, dan pemecahan masalah kompleks.',R:'Berhubungan dengan penerapan teknologi dan sistem teknis.',C:'Memerlukan struktur data, pengujian, dokumentasi, dan proses yang sistematis.'}},
+    {id:'career-farmakolog', icon:'💊', title:'Farmakolog', riasec:['I','R'], cluster:'Science & Analytics', evidenceLevel:'ADAPTED', description:'Mempelajari efek obat dan senyawa terhadap organisme melalui penelitian eksperimental.', rationale:{I:'Menekankan penelitian dan analisis ilmiah.',R:'Melibatkan eksperimen, bahan, dan sistem biologis fisik.'}},
+  {id:'career-desainer-grafis', icon:'🎨', title:'Desainer Grafis', riasec:['A','C'], cluster:'Creative & Media', evidenceLevel:'DIRECT', description:'Mengembangkan konsep visual dan materi komunikasi grafis untuk berbagai kebutuhan.', rationale:{A:'Membutuhkan kreativitas, estetika, dan ekspresi visual.',C:'Mengikuti spesifikasi, format, kebutuhan klien, dan proses revisi.'}},
+    {id:'career-penulis', icon:'✍️', title:'Penulis', riasec:['A','E'], cluster:'Creative & Media', evidenceLevel:'DIRECT', description:'Menghasilkan tulisan untuk menyampaikan gagasan, informasi, atau cerita kepada pembaca.', rationale:{A:'Membutuhkan ekspresi, imajinasi, dan pengembangan gagasan.',E:'Sering melibatkan komunikasi dengan audiens dan tujuan publikasi.'}},
+    {id:'career-direktur-kreatif', icon:'💡', title:'Direktur Kreatif', riasec:['A','E'], cluster:'Creative & Media', evidenceLevel:'ADAPTED', description:'Memimpin arah kreatif dan mengembangkan konsep komunikasi atau kampanye.', rationale:{A:'Menentukan konsep dan arah kreatif.',E:'Memimpin proses dan memengaruhi keputusan serta hasil proyek.'}},
+    {id:'career-musisi-komposer', icon:'🎼', title:'Musisi / Komposer', riasec:['A','E'], cluster:'Creative & Media', evidenceLevel:'ADAPTED', description:'Menciptakan, mengaransemen, atau membawakan karya musik.', rationale:{A:'Berpusat pada ekspresi dan penciptaan artistik.',E:'Dapat melibatkan pertunjukan, promosi, dan pengelolaan aktivitas profesional.'}},
+    {id:'career-fotografer', icon:'📷', title:'Fotografer', riasec:['R','A'], cluster:'Creative & Media', evidenceLevel:'DIRECT', description:'Menghasilkan gambar untuk kebutuhan artistik, dokumentasi, editorial, atau komersial.', rationale:{R:'Menggunakan kamera, peralatan, lokasi, dan proses produksi fisik.',A:'Membutuhkan komposisi visual, estetika, dan kreativitas.'}},
+    {id:'career-sutradara-film', icon:'🎬', title:'Sutradara Film', riasec:['A','E'], cluster:'Creative & Media', evidenceLevel:'ADAPTED', description:'Mengarahkan aspek kreatif produksi film dan mengoordinasikan keputusan artistik.', rationale:{A:'Menentukan visi dan bahasa artistik.',E:'Memimpin orang dan mengoordinasikan proses produksi.'}},
+  {id:'career-psikolog-klinis-konseling', icon:'🧠', title:'Psikolog Klinis/Konseling', riasec:['S','I'], cluster:'Helping & Human Services', evidenceLevel:'ADAPTED', description:'Membantu individu memahami dan menangani masalah psikologis melalui asesmen dan intervensi.', rationale:{S:'Berfokus pada membantu dan memahami orang lain.',I:'Menggunakan asesmen, penalaran, dan pemahaman ilmiah.'}},
+    {id:'career-guru', icon:'👨‍🏫', title:'Guru', riasec:['S'], cluster:'Helping & Human Services', evidenceLevel:'DIRECT', description:'Mengajar, membimbing, dan mendukung perkembangan peserta didik.', rationale:{S:'Pekerjaan utamanya melibatkan pengajaran, bimbingan, dan interaksi dengan orang lain.'}},
+    {id:'career-pekerja-sosial', icon:'🤝', title:'Pekerja Sosial', riasec:['S'], cluster:'Helping & Human Services', evidenceLevel:'DIRECT', description:'Membantu individu, keluarga, dan komunitas menghadapi masalah sosial serta meningkatkan kesejahteraan.', rationale:{S:'Berpusat pada pelayanan, dukungan, dan pemberdayaan orang lain.'}},
+    {id:'career-konselor-karir', icon:'🗣️', title:'Konselor Karir', riasec:['S','C','E'], cluster:'Helping & Human Services', evidenceLevel:'ADAPTED', description:'Membantu individu mengeksplorasi pilihan pendidikan dan karier serta membuat keputusan.', rationale:{S:'Melibatkan konseling dan bantuan langsung kepada individu.',C:'Mengorganisasi informasi pendidikan dan pekerjaan secara sistematis.',E:'Membantu individu menetapkan arah dan mengambil keputusan.'}},
+    {id:'career-manajer-layanan-sosial-komunitas', icon:'🌍', title:'Manajer Layanan Sosial & Komunitas', riasec:['E','S','C'], cluster:'Helping & Human Services', evidenceLevel:'ADAPTED', description:'Mengelola program layanan sosial dan kegiatan yang mendukung komunitas.', rationale:{E:'Mengelola program, sumber daya, dan keputusan organisasi.',S:'Berorientasi pada pelayanan masyarakat.',C:'Membutuhkan administrasi, perencanaan, dan pengelolaan program.'}},
+    {id:'career-terapis-okupasi', icon:'🧑‍🦽', title:'Terapis Okupasi', riasec:['S','I'], cluster:'Helping & Human Services', evidenceLevel:'ADAPTED', description:'Membantu individu meningkatkan kemampuan menjalankan aktivitas sehari-hari melalui intervensi terapeutik.', rationale:{S:'Berfokus pada bantuan langsung dan hubungan terapeutik.',I:'Menggunakan asesmen dan pemecahan masalah klinis.'}},
+  {id:'career-entrepreneur-pemilik-bisnis', icon:'🚀', title:'Entrepreneur / Pemilik Bisnis', riasec:['E','S','A'], cluster:'Business, Management & Law', evidenceLevel:'PROXY', description:'Membangun dan mengelola usaha dengan mengambil keputusan, mengembangkan peluang, dan mengoordinasikan sumber daya.', rationale:{E:'Berorientasi pada inisiatif, kepemimpinan, dan peluang bisnis.',S:'Melibatkan relasi dengan pelanggan, mitra, dan tim.',A:'Dalam banyak usaha, kreativitas digunakan untuk mengembangkan produk atau strategi.'}},
+    {id:'career-manajer-operasi-bisnis', icon:'💼', title:'Manajer Operasi / Bisnis', riasec:['E','C','S'], cluster:'Business, Management & Law', evidenceLevel:'ADAPTED', description:'Mengelola operasi organisasi, sumber daya, proses, dan pencapaian tujuan bisnis.', rationale:{E:'Memimpin dan mengambil keputusan.',C:'Mengandalkan perencanaan, sistem, dan pengendalian proses.',S:'Mengoordinasikan orang dan tim.'}},
+    {id:'career-pengacara', icon:'⚖️', title:'Pengacara', riasec:['E','C','I'], cluster:'Business, Management & Law', evidenceLevel:'DIRECT', description:'Menganalisis persoalan hukum, menyusun argumentasi, dan mewakili kepentingan klien.', rationale:{E:'Melibatkan persuasi, advokasi, dan negosiasi.',C:'Membutuhkan ketelitian terhadap aturan dan dokumen.',I:'Memerlukan analisis masalah dan penalaran.'}},
+    {id:'career-marketing-manager', icon:'📣', title:'Marketing Manager', riasec:['E','C'], cluster:'Business, Management & Law', evidenceLevel:'DIRECT', description:'Merencanakan dan mengarahkan kegiatan pemasaran untuk mencapai tujuan organisasi.', rationale:{E:'Melibatkan strategi, persuasi, dan pengambilan keputusan.',C:'Menggunakan perencanaan, data, target, dan evaluasi.'}},
+    {id:'career-analis-investasi', icon:'📈', title:'Analis Investasi', riasec:['C','E','I'], cluster:'Business, Management & Law', evidenceLevel:'ADAPTED', description:'Menganalisis informasi keuangan dan investasi untuk mendukung keputusan investasi.', rationale:{C:'Memerlukan ketelitian terhadap angka, data, dan laporan.',E:'Berhubungan dengan keputusan bisnis dan investasi.',I:'Memerlukan analisis informasi dan penalaran kuantitatif.'}},
+    {id:'career-spesialis-hubungan-masyarakat', icon:'📢', title:'Spesialis Hubungan Masyarakat', riasec:['E','A'], cluster:'Business, Management & Law', evidenceLevel:'ADAPTED', description:'Mengelola komunikasi organisasi dengan publik dan berbagai pemangku kepentingan.', rationale:{E:'Berorientasi pada persuasi, hubungan, dan representasi organisasi.',A:'Membutuhkan kemampuan menyusun pesan dan materi komunikasi kreatif.'}},
+  {id:'career-akuntan-auditor', icon:'🧾', title:'Akuntan / Auditor', riasec:['C','E','I'], cluster:'Finance, Administration & Information', evidenceLevel:'DIRECT', description:'Mencatat, memeriksa, dan menganalisis informasi keuangan serta kepatuhan terhadap standar.', rationale:{C:'Berpusat pada angka, ketelitian, prosedur, dan dokumentasi.',E:'Dapat melibatkan konsultasi dan komunikasi profesional.',I:'Membutuhkan analisis informasi keuangan.'}},
+    {id:'career-analis-keuangan', icon:'💹', title:'Analis Keuangan', riasec:['C','E','I'], cluster:'Finance, Administration & Information', evidenceLevel:'DIRECT', description:'Menganalisis data dan informasi keuangan untuk membantu pengambilan keputusan.', rationale:{C:'Menggunakan data, laporan, dan prosedur yang sistematis.',E:'Mendukung keputusan bisnis dan investasi.',I:'Memerlukan analisis dan interpretasi informasi.'}},
+    {id:'career-database-administrator', icon:'🗄️', title:'Database Administrator', riasec:['C','I'], cluster:'Technology & Digital Design', evidenceLevel:'DIRECT', description:'Mengelola, menjaga, dan memastikan kinerja serta keamanan sistem basis data.', rationale:{C:'Membutuhkan struktur, prosedur, dokumentasi, dan ketelitian.',I:'Melibatkan pemecahan masalah teknis dan analisis sistem.'}},
+    {id:'career-manajer-layanan-administrasi', icon:'📋', title:'Manajer Layanan Administrasi', riasec:['E','C','S'], cluster:'Finance, Administration & Information', evidenceLevel:'DIRECT', description:'Merencanakan dan mengoordinasikan layanan administratif organisasi.', rationale:{E:'Mengelola sumber daya dan keputusan operasional.',C:'Mengandalkan sistem dan prosedur administratif.',S:'Mengoordinasikan kebutuhan orang dan unit kerja.'}},
+    {id:'career-spesialis-pajak', icon:'💰', title:'Spesialis Pajak', riasec:['C','E'], cluster:'Finance, Administration & Information', evidenceLevel:'ADAPTED', description:'Menganalisis kewajiban pajak dan membantu memastikan kepatuhan terhadap peraturan perpajakan.', rationale:{C:'Memerlukan ketelitian terhadap angka, dokumen, dan aturan.',E:'Melibatkan konsultasi dan pengambilan keputusan profesional.'}},
+    {id:'ux-web-interface-designer', icon:'🖥️', title:'UX / Web & Digital Interface Designer', riasec:['I','A','C'], cluster:'Technology & Digital Design', evidenceLevel:'DIRECT', description:'Merancang dan menguji antarmuka digital dengan memperhatikan kebutuhan pengguna, fungsi, teknologi, dan desain visual.', rationale:{I:'Melibatkan riset pengguna, analisis, pengujian, dan pemecahan masalah.',A:'Membutuhkan kreativitas, desain visual, dan pengembangan konsep antarmuka.',C:'Melibatkan standar teknis, dokumentasi, pengujian, dan proses yang terstruktur.'}}
+];
+
+const RIASEC_TIE_ORDER = ['R','I','A','S','E','C'];
+
+function validateCareerDatabase() {
+  const validCodes = new Set(RIASEC_TIE_ORDER);
+  const ids = new Set();
+  const errors = [];
+  CAREERS.forEach((career, index) => {
+    if (!career.id) errors.push('Missing career id: ' + (career.title || index + 1));
+    if (ids.has(career.id)) errors.push('Duplicate career id: ' + career.id);
+    ids.add(career.id);
+    if (!Array.isArray(career.riasec) || career.riasec.length < 1 || career.riasec.length > 3) {
+      errors.push('Invalid RIASEC length: ' + career.title);
+    }
+    if (Array.isArray(career.riasec) && career.riasec.some(code => !validCodes.has(code))) {
+      errors.push('Invalid RIASEC code: ' + career.title);
+    }
+  });
+  if (errors.length) console.error('Career database validation:', errors);
+  return errors;
+}
+
+// ========== STATE ==========
+let currentQ = 0;
+let answers = new Array(42).fill(null);
+let scores = {R:0,I:0,A:0,S:0,E:0,C:0};
+let radarChart = null, trendChart = null, ageChart = null, genderChart = null;
+let tableFilter = 'semua';
+
+// ========== NAV ==========
+validateCareerDatabase();
+
+function goPage(p) {
+  document.querySelectorAll('.page').forEach(x => x.classList.remove('active'));
+  document.getElementById('page-'+p).classList.add('active');
+  if (p === 'quiz') initQuiz();
+  if (p === 'admin') initAdmin();
+}
+
+// ========== CONSENT ==========
+// participantConsent: status persetujuan consent, ikut disimpan sebagai bukti riset
+let participantConsent = false;
+
+function toggleConsentBtn() {
+  const checked = document.getElementById('consent-check').checked;
+  participantConsent = checked;
+  document.getElementById('consent-btn').disabled = !checked;
+}
+
+// ========== SEND RESULT VIA EMAIL (opsional, email tidak disimpan) ==========
+function sendResultEmail() {
+  const emailInput = document.getElementById('result-email-input');
+  const email = emailInput.value.trim();
+  const statusEl = document.getElementById('email-result-status');
+  const btn = document.getElementById('send-email-btn');
+
+  const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  if (!emailPattern.test(email)) {
+    statusEl.textContent = 'Masukkan alamat email yang valid.';
+    statusEl.className = 'email-result-status error';
+    return;
+  }
+
+  btn.disabled = true;
+  btn.textContent = 'Mengirim...';
+  statusEl.textContent = '';
+  statusEl.className = 'email-result-status';
+
+  // Kirim ke Apps Script HANYA untuk trigger pengiriman email.
+  // Email TIDAK disertakan dalam data yang tersimpan permanen (participantProfile / sheet utama).
+  fetch(APPS_SCRIPT_URL, {
+    method: 'POST',
+    headers: { 'Content-Type': 'text/plain' },
+    body: JSON.stringify({
+      action: 'sendResultEmail',
+      email: email,
+      typeCode: document.getElementById('result-badge').textContent.trim(),
+      typeName: document.getElementById('result-type-name').textContent,
+      description: document.getElementById('result-desc').textContent
+    })
+  })
+  .then(res => res.json())
+  .then(data => {
+    if (data && data.success) {
+      statusEl.textContent = 'Hasil berhasil dikirim ke email kamu ✓';
+      statusEl.className = 'email-result-status success';
+      emailInput.value = '';
+    } else {
+      throw new Error((data && data.message) || 'Gagal mengirim');
+    }
+  })
+  .catch(() => {
+    statusEl.textContent = 'Gagal mengirim email. Coba lagi nanti.';
+    statusEl.className = 'email-result-status error';
+  })
+  .finally(() => {
+    btn.disabled = false;
+    btn.textContent = 'Kirim';
+  });
+}
+
+// ========== PROFILE ==========
+// participantName: HANYA untuk tampilan di halaman hasil, TIDAK pernah dimasukkan ke payload data yang dikirim ke database
+let participantName = '';
+// participantProfile: data yang akan ikut disimpan ke database (tidak termasuk nama)
+let participantProfile = {};
+// participantUserId: kode acak unik per partisipan, dipakai sebagai pengganti identitas asli
+let participantUserId = '';
+// participantResult: hasil kuis (tipe dominan, skor, rekomendasi) yang akan ikut disimpan ke database
+let participantResult = {};
+// quizStartTime: waktu mulai kuis, dipakai menghitung durasi pengerjaan
+let quizStartTime = null;
+// participantFeedback: feedback pasca-hasil yang akan ikut disimpan ke database
+let participantFeedback = { akurasi: 0, relevansi: 0, komentar: '' };
+
+function setFeedbackRating(type, value) {
+  participantFeedback[type] = value;
+  const wrap = document.getElementById('fb-' + type);
+  wrap.querySelectorAll('button').forEach((btn, i) => {
+    btn.classList.toggle('active', i < value);
+  });
+}
+
+function generateUserId() {
+  const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789'; // tanpa karakter ambigu (0/O, 1/I)
+  let id = 'KK-';
+  for (let i = 0; i < 8; i++) id += chars[Math.floor(Math.random() * chars.length)];
+  return id;
+}
+
+function updateJenjangFields() {
+  const status = document.getElementById('p-status').value;
+  document.getElementById('field-kelas').classList.toggle('show', status === 'SMA' || status === 'SMK');
+  document.getElementById('field-peminatan').classList.toggle('show', status === 'SMA');
+  document.getElementById('field-jurusan-smk').classList.toggle('show', status === 'SMK');
+  document.getElementById('field-semester').classList.toggle('show', status === 'Mahasiswa');
+  document.getElementById('field-prodi').classList.toggle('show', status === 'Mahasiswa');
+}
+
+function autoSetPeminatan() {
+  const kelas = document.getElementById('p-kelas').value;
+  const status = document.getElementById('p-status').value;
+  const peminatan = document.getElementById('p-peminatan');
+  if (status === 'SMA' && kelas === 'Kelas 10' && !peminatan.value) {
+    peminatan.value = 'Belum ada peminatan';
+  }
+}
+
+function submitProfile() {
+  const status = document.getElementById('p-status').value;
+  const usia = document.getElementById('p-usia').value;
+  const institusi = document.getElementById('p-institusi').value.trim();
+  const domisili = document.getElementById('p-domisili').value.trim();
+
+  if (!status || !usia || !institusi || !domisili) {
+    alert('Mohon lengkapi Usia, Status Pendidikan, Asal Sekolah/Kampus, dan Domisili sebelum melanjutkan.');
+    return;
+  }
+  if (status === 'SMA' && (!document.getElementById('p-kelas').value || !document.getElementById('p-peminatan').value)) {
+    alert('Mohon lengkapi Kelas dan Peminatan.');
+    return;
+  }
+  if (status === 'SMK' && (!document.getElementById('p-kelas').value || !document.getElementById('p-jurusan-smk').value.trim())) {
+    alert('Mohon lengkapi Kelas dan Jurusan/Kompetensi Keahlian.');
+    return;
+  }
+  if (status === 'Mahasiswa' && (!document.getElementById('p-semester').value || !document.getElementById('p-prodi').value.trim())) {
+    alert('Mohon lengkapi Semester dan Program Studi.');
+    return;
+  }
+
+  // Nama disimpan HANYA di variabel lokal untuk tampilan hasil, tidak masuk participantProfile
+  participantName = document.getElementById('p-nama').value.trim();
+  participantUserId = generateUserId();
+
+  participantProfile = {
+    usia: usia,
+    status_pendidikan: status,
+    kelas: (status === 'SMA' || status === 'SMK') ? document.getElementById('p-kelas').value : '',
+    semester: status === 'Mahasiswa' ? document.getElementById('p-semester').value : '',
+    peminatan_sma: status === 'SMA' ? document.getElementById('p-peminatan').value : '',
+    jurusan_smk: status === 'SMK' ? document.getElementById('p-jurusan-smk').value.trim() : '',
+    program_studi: status === 'Mahasiswa' ? document.getElementById('p-prodi').value.trim() : '',
+    asal_institusi: institusi,
+    domisili: domisili,
+    sumber_info: document.getElementById('p-sumber').value,
+    device_type: /Mobi|Android|iPhone|iPad/i.test(navigator.userAgent) ? 'Mobile' : 'Desktop'
+  };
+
+  quizStartTime = Date.now();
+  goPage('quiz');
+}
+
+// ========== QUIZ ==========
+function initQuiz() {
+  currentQ = 0; answers = new Array(42).fill(null); scores = {R:0,I:0,A:0,S:0,E:0,C:0};
+  renderQuestion();
+  renderLiveScores();
+}
+
+function renderQuestion() {
+  const q = QUESTIONS[currentQ];
+  const s = SECTIONS.find(x => x.key === q.s);
+  const secIdx = SECTIONS.findIndex(x => x.key === q.s);
+
+  document.getElementById('q-num').textContent = 'Pertanyaan ' + String(currentQ+1).padStart(2,'0');
+  document.getElementById('q-text').textContent = q.q;
+  document.getElementById('sec-icon').textContent = s.icon;
+  document.getElementById('sec-name').textContent = s.name;
+  document.getElementById('sec-desc').textContent = s.desc;
+  document.getElementById('section-header').style.borderColor = s.color;
+  document.getElementById('prog-label').textContent = 'Bagian '+(secIdx+1)+' dari 6 — '+s.name;
+  document.getElementById('prog-count').textContent = (currentQ+1)+' / 42';
+  document.getElementById('prog-fill').style.width = (((currentQ+1)/42)*100)+'%';
+
+  const btns = document.querySelectorAll('.likert-btn');
+  btns.forEach(b => b.classList.remove('selected'));
+  if (answers[currentQ] !== null) {
+    btns[answers[currentQ]-1].classList.add('selected');
+    document.getElementById('btn-next').classList.add('enabled');
+  } else {
+    document.getElementById('btn-next').classList.remove('enabled');
+  }
+  document.getElementById('btn-back').style.opacity = currentQ === 0 ? '0.3' : '1';
+  document.getElementById('btn-next').textContent = currentQ === 41 ? 'Lihat Hasil ✨' : 'Lanjut →';
+
+  const card = document.getElementById('quiz-card');
+  card.style.animation = 'none'; void card.offsetWidth; card.style.animation = 'slideIn 0.35s cubic-bezier(0.4,0,0.2,1)';
+}
+
+function selectAnswer(val) {
+  answers[currentQ] = val;
+  const s = QUESTIONS[currentQ].s;
+  // Recalculate section score
+  scores = {R:0,I:0,A:0,S:0,E:0,C:0};
+  QUESTIONS.forEach((q,i) => { if(answers[i] !== null) scores[q.s] += answers[i]; });
+  document.querySelectorAll('.likert-btn').forEach(b => b.classList.remove('selected'));
+  document.querySelectorAll('.likert-btn[data-val="'+val+'"]')[0].classList.add('selected');
+  document.getElementById('btn-next').classList.add('enabled');
+  renderLiveScores();
+}
+
+function renderLiveScores() {
+  const wrap = document.getElementById('live-scores');
+  wrap.innerHTML = SECTIONS.map(s => {
+    const max = 35, pct = Math.min(100, (scores[s.key]/max)*100);
+    return `<div class="score-pill" style="border-color:${s.color}22">
+      <span style="font-size:14px">${s.icon}</span>
+      <span style="color:${s.color}">${s.key}</span>
+      <div class="pill-bar"><div class="pill-fill" style="width:${pct}%;background:${s.color}"></div></div>
+    </div>`;
+  }).join('');
+}
+
+function nextQ() {
+  if (answers[currentQ] === null) return;
+  if (currentQ === 41) { showResult(); return; }
+  currentQ++;
+  renderQuestion();
+}
+
+function prevQ() {
+  if (currentQ === 0) return;
+  currentQ--;
+  renderQuestion();
+}
+
+// ========== RESULT ==========
+// ========== CAREER MATCHING ==========
+// Career profile dapat memiliki 1, 2, atau 3 dimensi.
+// Bobot 50/30/20 diterapkan hanya pada dimensi yang tersedia, lalu
+// dinormalisasi agar career dengan profile pendek tidak dirugikan.
+// Formula ini adalah aturan matching aplikasi, bukan cut-off psikometrik.
+function calculateCareerMatch(scores, career) {
+  const baseWeights = [0.50, 0.30, 0.20];
+  const weights = career.riasec.map((_, i) => baseWeights[i] ?? 0);
+  const weightTotal = weights.reduce((sum, w) => sum + w, 0);
+  if (!weightTotal) return 0;
+
+  const weighted = career.riasec.reduce((sum, code, i) => {
+    const score = Math.max(0, Math.min(35, Number(scores[code]) || 0));
+    return sum + (score / 35) * (weights[i] / weightTotal);
+  }, 0);
+
+  // Penalti kecil jika dimensi pendukung sangat rendah.
+  const supportScores = career.riasec.slice(1).map(code =>
+    Math.max(0, Math.min(35, Number(scores[code]) || 0)) / 35
+  );
+  const meanSupport = supportScores.length ? supportScores.reduce((a,b)=>a+b,0)/supportScores.length : 1;
+  const supportPenalty = supportScores.length ? Math.max(0, 0.35 - meanSupport) * 0.12 : 0;
+
+  return Math.round(Math.max(0, Math.min(1, weighted - supportPenalty)) * 100);
+}
+
+function getCareerMatchLabel(score, maxScore) {
+  const relativeGap = maxScore - score;
+  if (score >= 70 && relativeGap <= 5) return 'Sangat Selaras';
+  if (score >= 60 && relativeGap <= 12) return 'Selaras';
+  if (score >= 50 && relativeGap <= 20) return 'Cukup Selaras';
+  return 'Kurang Selaras';
+}
+
+function getAllCareers() { return CAREERS; }
+
+function rankCareers(scores) {
+  const scored = getAllCareers().map(career => ({ ...career, matchScore: calculateCareerMatch(scores, career) }));
+  const maxScore = Math.max(...scored.map(c => c.matchScore), 0);
+  return scored
+    .map(career => ({ ...career, matchLabel: getCareerMatchLabel(career.matchScore, maxScore) }))
+    .sort((a,b) => {
+      if (b.matchScore !== a.matchScore) return b.matchScore - a.matchScore;
+      const aPrimary = scores[a.riasec[0]] || 0;
+      const bPrimary = scores[b.riasec[0]] || 0;
+      if (bPrimary !== aPrimary) return bPrimary - aPrimary;
+      return a.title.localeCompare(b.title, 'id');
+    });
+}
+
+function rankRIASEC(scoreMap) {
+  return Object.entries(scoreMap).sort((a,b) => {
+    const diff = b[1] - a[1];
+    if (diff !== 0) return diff;
+    return RIASEC_TIE_ORDER.indexOf(a[0]) - RIASEC_TIE_ORDER.indexOf(b[0]);
+  });
+}
+
+function escapeHTML(value) {
+  return String(value ?? '').replace(/[&<>'"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;',"\"":'&quot;'}[c]));
+}
+
+function buildCareerRationale(career, scores) {
+  const active = career.riasec.filter(code => (scores[code] || 0) > 0);
+  return active.map(code => {
+    const text = career.rationale?.[code];
+    return text ? `<div style="margin-top:4px"><strong>${code}</strong> — ${escapeHTML(text)}</div>` : '';
+  }).join('');
+}
+
+// ========== RESULT ==========
+function showResult() {
+  scores = {R:0,I:0,A:0,S:0,E:0,C:0};
+  QUESTIONS.forEach((q,i) => { if(answers[i] !== null) scores[q.s] += answers[i]; });
+
+  const sorted = rankRIASEC(scores);
+  const top = sorted[0][0], second = sorted[1][0], third = sorted[2][0];
+  const topSec = SECTIONS.find(s => s.key === top);
+  const profile = TYPE_PROFILES[top];
+  const profileCode = top + second + third;
+
+  participantResult = {
+    tipe_dominan: profileCode,
+    skor_r: scores.R, skor_i: scores.I, skor_a: scores.A,
+    skor_s: scores.S, skor_e: scores.E, skor_c: scores.C,
+    rekomendasi_karir: '',
+    waktu_pengerjaan_detik: quizStartTime ? Math.round((Date.now() - quizStartTime) / 1000) : ''
+  };
+
+  participantFeedback = { akurasi: 0, relevansi: 0, komentar: '' };
+  document.getElementById('fb-komentar').value = '';
+  ['akurasi','relevansi'].forEach(type => document.getElementById('fb-' + type).querySelectorAll('button').forEach(btn => btn.classList.remove('active')));
+
+  const badge = document.getElementById('result-badge');
+  badge.textContent = topSec.icon+' '+profileCode+' — '+profile.name;
+  badge.style.background = topSec.fill; badge.style.color = topSec.color; badge.style.border = '1px solid '+topSec.color+'44';
+
+  document.getElementById('result-greeting').textContent = participantName ? ('Hasil untuk ' + participantName) : '';
+  document.getElementById('result-type-name').textContent = profile.name;
+  document.getElementById('result-title').innerHTML = 'Profil minatmu menonjol pada <span style="color:'+topSec.color+'">'+profile.name+'</span>';
+  document.getElementById('result-desc').textContent = profile.desc;
+
+  const maxScore = Math.max(...Object.values(scores));
+  document.getElementById('score-bars').innerHTML = SECTIONS.map(s => {
+    const pct = maxScore > 0 ? Math.round((scores[s.key]/maxScore)*100) : 0;
+    return `<div class="score-bar-item"><div class="sbi-label" style="background:${s.fill};color:${s.color}">${s.key}</div><span class="sbi-name">${s.name}</span><div class="sbi-bar-bg"><div class="sbi-bar-fill" style="width:${pct}%;background:${s.color}"></div></div><span class="sbi-score" style="color:${s.color}">${scores[s.key]}</span></div>`;
+  }).join('');
+
+  const rankedCareers = rankCareers(scores);
+  const careers = rankedCareers.slice(0, 6);
+  participantResult.rekomendasi_karir = careers.map(c => c.title).join('; ');
+
+  document.getElementById('careers-grid').innerHTML = careers.map(c => {
+    const matchClass = c.matchLabel === 'Sangat Selaras' ? 'match-high' :
+      c.matchLabel === 'Selaras' ? 'match-med' :
+      c.matchLabel === 'Cukup Selaras' ? 'match-low' : 'match-poor';
+    const code = c.riasec.join('');
+    return `<div class="career-card" title="Profil RIASEC: ${code}">
+      <div class="career-icon">${c.icon}</div>
+      <div class="career-title">${escapeHTML(c.title)}</div>
+      <div style="font-size:10px;color:var(--muted);margin:4px 0 6px">RIASEC: <strong>${code}</strong> · ${escapeHTML(c.cluster)}</div>
+      <span class="career-match ${matchClass}">${c.matchLabel}</span>
+      <div style="font-size:11px;margin-top:6px;opacity:.82">Skor keselarasan profil: ${c.matchScore}/100</div>
+      <div style="font-size:11px;line-height:1.5;margin-top:8px;color:var(--muted)">${escapeHTML(c.description)}</div>
+      <div style="font-size:10.5px;line-height:1.45;margin-top:7px;color:var(--muted)">${buildCareerRationale(c, scores)}</div>
+    </div>`;
+  }).join('');
+
+  document.getElementById('traits-wrap').innerHTML = profile.traits.map(t => `<span class="trait-tag">${escapeHTML(t)}</span>`).join('');
+  document.getElementById('env-wrap').innerHTML = profile.env.map(e => `<span class="trait-tag">${escapeHTML(e)}</span>`).join('');
+
+  goPage('result');
+
+  setTimeout(() => {
+    if (radarChart) radarChart.destroy();
+    const ctx = document.getElementById('radarChart').getContext('2d');
+    radarChart = new Chart(ctx, {
+      type:'radar',
+      data:{labels:SECTIONS.map(s=>s.name),datasets:[{data:SECTIONS.map(s=>scores[s.key]),backgroundColor:'rgba(123,97,255,0.2)',borderColor:'#7B61FF',pointBackgroundColor:SECTIONS.map(s=>({R:'#FF6B6B',I:'#FFB347',A:'#C77DFF',S:'#56CFE1',E:'#FF9F1C',C:'#80ED99'})[s.key]),pointRadius:5,borderWidth:2}]},
+      options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{r:{min:0,max:35,grid:{color:'rgba(255,255,255,0.08)'},angleLines:{color:'rgba(255,255,255,0.08)'},ticks:{display:false},pointLabels:{color:'#F0EFF8',font:{family:'Syne',size:12,weight:'700'}}}}}
+    });
+    addToAdminDB(top, second, scores);
+  },100);
+}
+
+function retakeQuiz() { goPage('quiz'); }
+
+function downloadResult() { alert('Fitur unduh PDF akan tersedia di versi WordPress dengan plugin PDF generation.'); }
+
+// ========== ADMIN DB ==========
+const NAMES = ['Budi Santoso','Siti Rahayu','Ahmad Fauzi','Dewi Putri','Rizky Pratama','Anisa Maharani','Fajar Nugroho','Citra Lestari','Dimas Arya','Nadia Puspita','Eko Wahyudi','Fitri Handayani','Galang Saputra','Hana Wijaya','Irfan Kusuma','Jihan Rachmawati'];
+const LEVELS = ['Siswa SMA','Mahasiswa Baru','Mahasiswa Tingkat 2'];
+
+let adminDB = [];
+function seedDB() {
+  if (adminDB.length > 0) return;
+  for (let i = 0; i < 47; i++) {
+    const s = SECTIONS[Math.floor(Math.random()*6)];
+    const s2 = SECTIONS.filter(x => x.key !== s.key)[Math.floor(Math.random()*5)];
+    const sc = {};
+    SECTIONS.forEach(sec => { sc[sec.key] = Math.floor(Math.random()*22)+8; });
+    sc[s.key] = Math.floor(Math.random()*8)+28;
+    const d = new Date(2025, 10 + Math.floor(i/16), (i % 28) + 1);
+    adminDB.push({
+      id: 'RK'+String(1000+i).slice(1),
+      name: NAMES[i % NAMES.length],
+      age: Math.floor(Math.random()*6)+16,
+      level: LEVELS[Math.floor(Math.random()*3)],
+      t1: s.key, t2: s2.key, scores: sc,
+      gender: Math.random()>0.48?'P':'L',
+      date: d.toLocaleDateString('id-ID')
+    });
+  }
+}
+
+function addToAdminDB(t1, t2, sc) {
+  adminDB.unshift({
+    id: 'RK'+Date.now().toString().slice(-4),
+    name: 'Anda (Demo)',
+    age: 18, level: 'Siswa SMA',
+    t1, t2, scores: {...sc},
+    gender: '-',
+    date: new Date().toLocaleDateString('id-ID')
+  });
+  document.getElementById('kpi-total').textContent = adminDB.length;
+}
+
+// ========== ADMIN ==========
+function doLogin() {
+  const u = document.getElementById('login-user').value;
+  const p = document.getElementById('login-pass').value;
+  if (u === 'admin' && p === 'admin123') {
+    document.getElementById('admin-login').style.display = 'none';
+    initAdminCharts();
+  } else {
+    document.getElementById('login-user').style.borderColor = 'var(--r)';
+    document.getElementById('login-pass').style.borderColor = 'var(--r)';
+    setTimeout(() => {
+      document.getElementById('login-user').style.borderColor = '';
+      document.getElementById('login-pass').style.borderColor = '';
+    }, 1000);
+  }
+}
+document.getElementById('login-user').addEventListener('keydown', e => { if(e.key==='Enter') doLogin(); });
+document.getElementById('login-pass').addEventListener('keydown', e => { if(e.key==='Enter') doLogin(); });
+
+function initAdmin() { seedDB(); }
+
+function initAdminCharts() {
+  seedDB();
+  document.getElementById('kpi-total').textContent = adminDB.length;
+
+  // Top type
+  const typeCounts = {R:0,I:0,A:0,S:0,E:0,C:0};
+  adminDB.forEach(r => typeCounts[r.t1]++);
+  const topType = Object.entries(typeCounts).sort((a,b)=>b[1]-a[1])[0][0];
+  const topSec = SECTIONS.find(s => s.key === topType);
+  document.getElementById('kpi-dom').innerHTML = `<span style="color:${topSec.color}">${topSec.icon} ${topType}</span>`;
+
+  // Distribution bars
+  const total = adminDB.length;
+  const colorMap = {R:'var(--r)',I:'var(--i)',A:'var(--a)',S:'var(--s)',E:'var(--e)',C:'var(--c)'};
+  document.getElementById('dist-bars').innerHTML = SECTIONS.map(s => {
+    const cnt = typeCounts[s.key];
+    const pct = Math.round((cnt/total)*100);
+    return `<div class="dist-bar-item">
+      <span class="dist-label" style="color:${colorMap[s.key]}">${s.key}</span>
+      <div class="dist-bar-bg"><div class="dist-bar-fill" style="width:${pct}%;background:${colorMap[s.key]}"></div></div>
+      <span class="dist-pct">${pct}% (${cnt})</span>
+    </div>`;
+  }).join('');
+
+  // Trend chart
+  if (trendChart) trendChart.destroy();
+  const trendCtx = document.getElementById('trendChart').getContext('2d');
+  trendChart = new Chart(trendCtx, {
+    type: 'line',
+    data: {
+      labels: ['Okt','Nov','Des','Jan','Feb','Mar'],
+      datasets: [{
+        label: 'Responden',
+        data: [6,9,12,8,14,adminDB.length > 47 ? adminDB.length - 42 + 12 : 12],
+        borderColor: '#7B61FF',
+        backgroundColor: 'rgba(123,97,255,0.1)',
+        pointBackgroundColor: '#7B61FF',
+        tension: 0.4, fill: true, pointRadius: 4
+      }]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      plugins: { legend: { display: false } },
+      scales: {
+        x: { grid: { color:'rgba(255,255,255,0.05)' }, ticks: { color:'rgba(240,239,248,0.5)', font:{size:11} } },
+        y: { grid: { color:'rgba(255,255,255,0.05)' }, ticks: { color:'rgba(240,239,248,0.5)', font:{size:11} }, min:0 }
+      }
+    }
+  });
+
+  // Age chart
+  if (ageChart) ageChart.destroy();
+  const ageCtx = document.getElementById('ageChart').getContext('2d');
+  const ageBuckets = {'15-16':0,'17-18':0,'19-20':0,'21-22':0};
+  adminDB.forEach(r => {
+    if(r.age<=16) ageBuckets['15-16']++;
+    else if(r.age<=18) ageBuckets['17-18']++;
+    else if(r.age<=20) ageBuckets['19-20']++;
+    else ageBuckets['21-22']++;
+  });
+  ageChart = new Chart(ageCtx, {
+    type: 'bar',
+    data: {
+      labels: Object.keys(ageBuckets),
+      datasets: [{ data: Object.values(ageBuckets), backgroundColor: ['#7B61FF','#FF61D2','#56CFE1','#80ED99'], borderRadius: 6 }]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      plugins: { legend: { display: false } },
+      scales: {
+        x: { grid: { display:false }, ticks: { color:'rgba(240,239,248,0.5)', font:{size:11} } },
+        y: { grid: { color:'rgba(255,255,255,0.05)' }, ticks: { color:'rgba(240,239,248,0.5)', font:{size:11} }, min:0 }
+      }
+    }
+  });
+
+  // Gender chart
+  if (genderChart) genderChart.destroy();
+  const gCtx = document.getElementById('genderChart').getContext('2d');
+  const laki = adminDB.filter(r=>r.gender==='L').length;
+  const perempuan = adminDB.filter(r=>r.gender==='P').length;
+  const lainnya = adminDB.filter(r=>r.gender==='-').length;
+  genderChart = new Chart(gCtx, {
+    type: 'doughnut',
+    data: {
+      labels: ['Laki-laki','Perempuan','Lainnya'],
+      datasets: [{ data: [laki,perempuan,lainnya], backgroundColor:['#7B61FF','#FF61D2','#56CFE1'], hoverOffset:4, borderWidth:2, borderColor:'#13132A' }]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      plugins: {
+        legend: { display: true, position: 'bottom', labels: { color:'rgba(240,239,248,0.7)', font:{size:12}, padding:12, boxWidth:12 } }
+      },
+      cutout: '65%'
+    }
+  });
+
+  renderTable();
+}
+
+function renderTable() {
+  const search = document.getElementById('search-box').value.toLowerCase();
+  const colorMap = {R:'var(--r)',I:'var(--i)',A:'var(--a)',S:'var(--s)',E:'var(--e)',C:'var(--c)'};
+  const softMap  = {R:'var(--r-soft)',I:'var(--i-soft)',A:'var(--a-soft)',S:'var(--s-soft)',E:'var(--e-soft)',C:'var(--c-soft)'};
+  const filtered = adminDB.filter(r => {
+    const matchFilter = tableFilter === 'semua' || r.t1 === tableFilter;
+    const matchSearch = !search || r.name.toLowerCase().includes(search) || r.id.toLowerCase().includes(search);
+    return matchFilter && matchSearch;
+  });
+  document.getElementById('table-body').innerHTML = filtered.map(r => `
+    <tr>
+      <td><span class="table-code">${r.id}</span></td>
+      <td>${r.name}</td>
+      <td>${r.age}</td>
+      <td>${r.level}</td>
+      <td><span class="table-badge" style="background:${softMap[r.t1]};color:${colorMap[r.t1]}">${r.t1}</span></td>
+      <td><span class="table-badge" style="background:${softMap[r.t2]};color:${colorMap[r.t2]}">${r.t2}</span></td>
+      ${SECTIONS.map(s=>`<td style="color:${colorMap[s.key]};font-weight:600">${r.scores[s.key]}</td>`).join('')}
+      <td style="color:var(--muted);font-size:12px">${r.date}</td>
+    </tr>`).join('');
+}
+
+function setFilter(f, el) {
+  tableFilter = f;
+  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+  el.classList.add('active');
+  renderTable();
+}
+
+function filterTable() { renderTable(); }
+
+function exportCSV() {
+  const headers = ['Kode','Nama','Usia','Tingkat','Tipe1','Tipe2','R','I','A','S','E','C','Tanggal'];
+  const rows = adminDB.map(r => [r.id,r.name,r.age,r.level,r.t1,r.t2,...SECTIONS.map(s=>r.scores[s.key]),r.date]);
+  const csv = [headers, ...rows].map(r => r.join(',')).join('\n');
+  const blob = new Blob([csv], {type:'text/csv'});
+  const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'riasec-data.csv'; a.click();
+}
+
+function scrollInfo() { alert('Informasi lengkap tentang RIASEC tersedia di halaman Tentang kami.'); }
+
+// Kirim tinggi halaman ke WordPress parent (untuk auto-resize iframe)
+function sendHeight() {
+  var height = document.body.scrollHeight;
+  window.parent.postMessage({ height: height }, '*');
+}
+setInterval(sendHeight, 500);
+</script>
+</body>
+</html>
