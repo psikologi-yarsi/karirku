@@ -239,7 +239,7 @@
     margin-bottom: 10px;
   }
   .progress-label { font-size: 13px; color: var(--muted); }
-  .progress-count { font-family: 'Syne', sans-serif; font-size: 20px; font-weight: 700; }
+  .progress-count { display: none; }
   .progress-bar-bg {
     height: 6px; background: var(--surface2); border-radius: 3px; overflow: hidden;
   }
@@ -1358,16 +1358,7 @@
       </div>
       <div class="progress-bar-bg"><div class="progress-bar-fill" id="prog-fill" style="width:2.4%"></div></div>
     </div>
-
-    <div class="quiz-section-header" id="section-header">
-      <div class="section-icon" id="sec-icon">🔧</div>
-      <div class="section-info">
-        <h3 id="sec-name">Realistic</h3>
-        <p id="sec-desc">Suka aktivitas fisik, alat, mesin, dan bekerja di luar ruangan</p>
-      </div>
-    </div>
-
-    <div class="quiz-card" id="quiz-card">
+<div class="quiz-card" id="quiz-card">
       <div class="quiz-card-header">
         <div class="q-num" id="q-num">Pertanyaan 01</div>
         <div class="q-text" id="q-text">Saya menikmati pekerjaan yang menggunakan tangan seperti memperbaiki peralatan atau membangun sesuatu.</div>
@@ -1687,6 +1678,9 @@ const QUESTIONS = [
   { s:'C', q:'Saya suka memeriksa kembali pekerjaan saya untuk memastikan tidak ada kesalahan.' }
 ];
 
+// Urutan item diacak untuk setiap sesi; bank QUESTIONS tetap menjadi sumber item asli.
+let quizQuestions = QUESTIONS.slice();
+
 const CAREERS = [
   {id:'career-insinyur-mesin', icon:'⚙️', title:'Insinyur Mesin', riasec:['R','I','C'], cluster:'Engineering & Technical', evidenceLevel:'DIRECT', description:'Merancang, mengembangkan, menguji, dan memperbaiki mesin serta sistem mekanik.', rationale:{R:'Bekerja dengan mesin, peralatan, dan sistem fisik.',I:'Menganalisis masalah teknis dan menerapkan prinsip rekayasa.',C:'Menggunakan spesifikasi, standar, perhitungan, dan dokumentasi teknis.'}},
     {id:'career-teknisi-teknik-industri', icon:'🔧', title:'Teknisi Teknik Industri', riasec:['R','C','I'], cluster:'Engineering & Technical', evidenceLevel:'DIRECT', description:'Mendukung pengoperasian, pengujian, dan perbaikan proses serta sistem industri.', rationale:{R:'Berinteraksi dengan peralatan dan proses fisik.',C:'Mengikuti prosedur, standar, dan pengendalian kualitas.',I:'Menganalisis proses untuk menemukan cara kerja yang lebih baik.'}},
@@ -1777,6 +1771,7 @@ function startDeveloperTestMode() {
   const scenario = getTestModeScenario();
   if (!scenario) return false;
 
+  quizQuestions = QUESTIONS.slice(); // skenario QA memakai urutan baku R-I-A-S-E-C
   answers = buildTestAnswers(scenario);
   if (!answers) return false;
 
@@ -2013,25 +2008,31 @@ function submitProfile() {
 }
 
 // ========== QUIZ ==========
+function shuffleQuestions(items) {
+  const shuffled = items.slice();
+  // Fisher-Yates: setiap item muncul tepat satu kali dalam urutan acak.
+  for (let i = shuffled.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+  }
+  return shuffled;
+}
+
 function initQuiz() {
-  currentQ = 0; answers = new Array(42).fill(null); scores = {R:0,I:0,A:0,S:0,E:0,C:0};
+  currentQ = 0;
+  quizQuestions = shuffleQuestions(QUESTIONS);
+  answers = new Array(quizQuestions.length).fill(null);
+  scores = {R:0,I:0,A:0,S:0,E:0,C:0};
   renderQuestion();
   renderLiveScores();
 }
 
 function renderQuestion() {
-  const q = QUESTIONS[currentQ];
-  const s = SECTIONS.find(x => x.key === q.s);
-  const secIdx = SECTIONS.findIndex(x => x.key === q.s);
-
+  const q = quizQuestions[currentQ];
   document.getElementById('q-num').textContent = 'Pertanyaan ' + String(currentQ+1).padStart(2,'0');
   document.getElementById('q-text').textContent = q.q;
-  document.getElementById('sec-icon').textContent = s.icon;
-  document.getElementById('sec-name').textContent = s.name;
-  document.getElementById('sec-desc').textContent = s.desc;
-  document.getElementById('section-header').style.borderColor = s.color;
-  document.getElementById('prog-label').textContent = 'Bagian '+(secIdx+1)+' dari 6 — '+s.name;
-  document.getElementById('prog-count').textContent = (currentQ+1)+' / 42';
+  document.getElementById('prog-label').textContent = 'Progres tes: ' + (currentQ+1) + ' dari 42';
+  document.getElementById('prog-count').textContent = '';
   document.getElementById('prog-fill').style.width = (((currentQ+1)/42)*100)+'%';
 
   const btns = document.querySelectorAll('.likert-btn');
@@ -2051,10 +2052,10 @@ function renderQuestion() {
 
 function selectAnswer(val) {
   answers[currentQ] = val;
-  const s = QUESTIONS[currentQ].s;
+  const s = quizQuestions[currentQ].s;
   // Recalculate section score
   scores = {R:0,I:0,A:0,S:0,E:0,C:0};
-  QUESTIONS.forEach((q,i) => { if(answers[i] !== null) scores[q.s] += answers[i]; });
+  quizQuestions.forEach((q,i) => { if(answers[i] !== null) scores[q.s] += answers[i]; });
   document.querySelectorAll('.likert-btn').forEach(b => b.classList.remove('selected'));
   document.querySelectorAll('.likert-btn[data-val="'+val+'"]')[0].classList.add('selected');
   document.getElementById('btn-next').classList.add('enabled');
@@ -2166,7 +2167,7 @@ function buildRIASECNarrative(profileSections, profileCode) {
 // ========== RESULT ==========
 function showResult() {
   scores = {R:0,I:0,A:0,S:0,E:0,C:0};
-  QUESTIONS.forEach((q,i) => { if(answers[i] !== null) scores[q.s] += answers[i]; });
+  quizQuestions.forEach((q,i) => { if(answers[i] !== null) scores[q.s] += answers[i]; });
 
   const sorted = rankRIASEC(scores);
   const top = sorted[0][0], second = sorted[1][0], third = sorted[2][0];
@@ -2281,27 +2282,81 @@ async function downloadResult() {
     // PDF hanya berisi hasil; email, feedback, dan tombol aksi tidak ikut.
     clone.querySelectorAll('.email-result-box, .feedback-box, .result-cta').forEach(el => el.remove());
 
-    // html2canvas tidak selalu membawa bitmap dari <canvas> ketika elemen di-clone.
-    // Ganti radar canvas pada clone dengan snapshot dari canvas asli.
+    // html2canvas tidak selalu membawa bitmap canvas ketika elemen di-clone.
+    // Buat ulang radar khusus PDF dengan latar putih dan label gelap agar terbaca saat dicetak.
     const originalRadar = document.getElementById('radarChart');
     const clonedRadar = clone.querySelector('#radarChart');
-    if (originalRadar && clonedRadar && originalRadar.width && originalRadar.height) {
+    if (originalRadar && clonedRadar && originalRadar.width && originalRadar.height && window.Chart) {
+      const pdfRadarCanvas = document.createElement('canvas');
+      pdfRadarCanvas.width = originalRadar.width;
+      pdfRadarCanvas.height = originalRadar.height;
+      const pdfRadarChart = new Chart(pdfRadarCanvas.getContext('2d'), {
+        type: 'radar',
+        data: {
+          labels: SECTIONS.map(s => s.name),
+          datasets: [{
+            data: SECTIONS.map(s => scores[s.key]),
+            backgroundColor: 'rgba(123,97,255,0.16)',
+            borderColor: '#7054D8',
+            pointBackgroundColor: SECTIONS.map(s => ({R:'#D94B4B',I:'#C47A16',A:'#9450C8',S:'#1595A8',E:'#D97706',C:'#269B55'})[s.key]),
+            pointRadius: 5,
+            borderWidth: 2
+          }]
+        },
+        options: {
+          responsive: false,
+          maintainAspectRatio: false,
+          animation: false,
+          plugins: { legend: { display: false } },
+          scales: {
+            r: {
+              min: 0, max: 35,
+              grid: { color: 'rgba(40,45,60,0.16)' },
+              angleLines: { color: 'rgba(40,45,60,0.20)' },
+              ticks: { display: false },
+              pointLabels: { color: '#303344', font: { family: 'Arial', size: 12, weight: '600' } }
+            }
+          }
+        }
+      });
+      await new Promise(resolve => requestAnimationFrame(resolve));
       const radarImg = document.createElement('img');
-      radarImg.src = originalRadar.toDataURL('image/png');
-      radarImg.width = originalRadar.width;
-      radarImg.height = originalRadar.height;
+      radarImg.src = pdfRadarCanvas.toDataURL('image/png');
+      radarImg.width = pdfRadarCanvas.width;
+      radarImg.height = pdfRadarCanvas.height;
       radarImg.style.width = getComputedStyle(originalRadar).width;
       radarImg.style.height = getComputedStyle(originalRadar).height;
       radarImg.style.display = 'block';
       clonedRadar.replaceWith(radarImg);
+      pdfRadarChart.destroy();
     }
+
+    // Override tampilan khusus salinan PDF: latar putih, kartu putih, teks gelap.
+    const printStyle = document.createElement('style');
+    printStyle.textContent = `
+      .result-wrap { background: #ffffff !important; color: #202333 !important; }
+      .result-hero, .result-hero p, .result-greeting { color: #303344 !important; }
+      .result-card, .riasec-profile-item, .career-card {
+        background: #ffffff !important; border-color: #d9dce5 !important;
+        box-shadow: none !important; color: #202333 !important;
+      }
+      .result-card h3, .sbi-name, .career-title, .riasec-profile-name,
+      .riasec-profile-role, .trait-tag, .result-note {
+        color: #303344 !important;
+      }
+      .result-note, .trait-tag { background: #f5f6fa !important; border-color: #d9dce5 !important; }
+      .sbi-bar-bg { background: #e7e9ef !important; }
+      .career-card [style*="color:var(--muted)"],
+      .career-card [style*="color: var(--muted)"] { color: #505568 !important; }
+    `;
+    clone.appendChild(printStyle);
 
     clone.style.width = '900px';
     clone.style.maxWidth = '900px';
     clone.style.margin = '0';
     clone.style.padding = '40px';
-    clone.style.background = '#0D0D1A';
-    clone.style.color = '#F0EFF8';
+    clone.style.background = '#ffffff';
+    clone.style.color = '#202333';
     clone.style.position = 'absolute';
     clone.style.left = '-100000px';
     clone.style.top = '0';
@@ -2314,7 +2369,7 @@ async function downloadResult() {
 
     const canvas = await window.html2canvas(clone, {
       scale: Math.min(2, window.devicePixelRatio || 1.5),
-      backgroundColor: '#0D0D1A',
+      backgroundColor: '#ffffff',
       useCORS: true,
       allowTaint: false,
       logging: false,
@@ -2351,7 +2406,7 @@ async function downloadResult() {
       slice.height = sliceHeightPx;
 
       const ctx = slice.getContext('2d');
-      ctx.fillStyle = '#0D0D1A';
+      ctx.fillStyle = '#ffffff';
       ctx.fillRect(0, 0, slice.width, slice.height);
       ctx.drawImage(
         canvas,
