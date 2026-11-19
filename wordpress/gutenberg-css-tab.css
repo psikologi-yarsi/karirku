@@ -89,6 +89,7 @@
   #karirku-app .hero h1 {
     font-size: clamp(36px, 6vw, 72px); font-weight: 800; line-height: 1.05;
     letter-spacing: -2px;
+    color: #fff !important;
   }
   #karirku-app .hero h1 .highlight {
     background: linear-gradient(135deg, var(--accent) 0%, var(--accent2) 50%, var(--r) 100%);
