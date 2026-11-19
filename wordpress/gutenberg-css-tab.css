@@ -1,0 +1,875 @@
+/* KarirKu | Tempelkan seluruh isi file ini ke tab CSS Gutenberg */
+#karirku-app {
+    --bg: #0D0D1A;
+    --surface: #13132A;
+    --surface2: #1A1A35;
+    --border: rgba(255,255,255,0.08);
+    --text: #F0EFF8;
+    --muted: rgba(240,239,248,0.55);
+    --r: #FF6B6B; --r-soft: rgba(255,107,107,0.15); --r-glow: rgba(255,107,107,0.3);
+    --i: #FFB347; --i-soft: rgba(255,179,71,0.15); --i-glow: rgba(255,179,71,0.3);
+    --a: #C77DFF; --a-soft: rgba(199,125,255,0.15); --a-glow: rgba(199,125,255,0.3);
+    --s: #56CFE1; --s-soft: rgba(86,207,225,0.15); --s-glow: rgba(86,207,225,0.3);
+    --e: #FF9F1C; --e-soft: rgba(255,159,28,0.15); --e-glow: rgba(255,159,28,0.3);
+    --c: #80ED99; --c-soft: rgba(128,237,153,0.15); --c-glow: rgba(128,237,153,0.3);
+    --accent: #7B61FF; --accent2: #FF61D2;
+  }
+
+  #karirku-app * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  #karirku-app {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  #karirku-app h1, #karirku-app h2, #karirku-app h3, #karirku-app .brand { font-family: 'Syne', sans-serif; }
+
+  #karirku-app /* ========== PAGES ========== */
+  .page { display: none; min-height: 100vh; }
+  #karirku-app .page.active { display: flex; flex-direction: column; }
+
+  #karirku-app /* ========== ANIMATED BG ========== */
+  .bg-orbs {
+    position: fixed; inset: 0; pointer-events: none; z-index: 0; overflow: hidden;
+  }
+  #karirku-app .orb {
+    position: absolute; border-radius: 50%; filter: blur(80px); opacity: 0.18;
+    animation: drift 20s ease-in-out infinite alternate;
+  }
+  #karirku-app .orb1 { width:500px; height:500px; background:var(--accent); top:-100px; left:-100px; animation-delay:0s; }
+  #karirku-app .orb2 { width:400px; height:400px; background:var(--accent2); bottom:-80px; right:-60px; animation-delay:-7s; }
+  #karirku-app .orb3 { width:300px; height:300px; background:var(--s); top:40%; left:60%; animation-delay:-13s; }
+  @keyframes drift { 0%{transform:translate(0,0) scale(1)} 100%{transform:translate(40px,30px) scale(1.1)} }
+
+  #karirku-app /* ========== NAV ========== */
+  nav {
+    position: relative; z-index: 10;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 20px 40px;
+    border-bottom: 1px solid var(--border);
+    background: rgba(13,13,26,0.8);
+    backdrop-filter: blur(12px);
+  }
+  #karirku-app .brand { font-size: 22px; font-weight: 800; letter-spacing: -0.5px; }
+  #karirku-app .brand span { background: linear-gradient(135deg, var(--accent), var(--accent2)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+  #karirku-app .nav-links { display: flex; gap: 8px; }
+  #karirku-app .nav-btn {
+    padding: 8px 18px; border-radius: 20px; border: 1px solid var(--border);
+    background: transparent; color: var(--muted); cursor: pointer;
+    font-family: 'Plus Jakarta Sans', sans-serif; font-size: 14px; font-weight: 500;
+    transition: all 0.2s;
+  }
+  #karirku-app .nav-btn:hover, #karirku-app .nav-btn.active { background: var(--surface2); color: var(--text); border-color: rgba(255,255,255,0.2); }
+  #karirku-app .nav-btn.primary {
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    border: none; color: #fff;
+  }
+  #karirku-app .nav-btn.primary:hover { opacity: 0.9; transform: translateY(-1px); }
+
+  #karirku-app /* ========== HERO ========== */
+  .hero {
+    position: relative; z-index: 1;
+    flex: 1; display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    text-align: center; padding: 60px 40px;
+    gap: 28px;
+  }
+  #karirku-app .hero-badge {
+    display: inline-flex; align-items: center; gap: 8px;
+    padding: 8px 18px; border-radius: 20px;
+    background: var(--surface2); border: 1px solid var(--border);
+    font-size: 13px; color: var(--muted);
+  }
+  #karirku-app .hero-badge .dot { width: 7px; height: 7px; border-radius: 50%; background: var(--c); display: inline-block; animation: pulse 2s ease infinite; }
+  @keyframes pulse { 0%,100%{transform:scale(1);opacity:1} 50%{transform:scale(1.4);opacity:0.7} }
+
+  #karirku-app .hero h1 {
+    font-size: clamp(36px, 6vw, 72px); font-weight: 800; line-height: 1.05;
+    letter-spacing: -2px;
+  }
+  #karirku-app .hero h1 .highlight {
+    background: linear-gradient(135deg, var(--accent) 0%, var(--accent2) 50%, var(--r) 100%);
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  }
+  #karirku-app .hero-sub {
+    font-size: 18px; color: var(--muted); max-width: 500px; line-height: 1.6;
+  }
+  #karirku-app .hero-cta {
+    display: flex; gap: 12px; flex-wrap: wrap; justify-content: center;
+  }
+  #karirku-app .btn-primary {
+    padding: 14px 32px; border-radius: 30px;
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    border: none; color: #fff; font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 16px; font-weight: 600; cursor: pointer;
+    transition: all 0.25s; box-shadow: 0 0 30px rgba(123,97,255,0.35);
+  }
+  #karirku-app .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 0 45px rgba(123,97,255,0.5); }
+  #karirku-app .btn-ghost {
+    padding: 14px 32px; border-radius: 30px;
+    background: var(--surface2); border: 1px solid rgba(123,97,255,0.65);
+    color: var(--text); font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 16px; font-weight: 600; cursor: pointer; transition: all 0.2s;
+    box-shadow: 0 0 18px rgba(123,97,255,0.12);
+  }
+  #karirku-app .btn-ghost:hover {
+    background: rgba(123,97,255,0.18); border-color: var(--accent);
+    color: #fff; transform: translateY(-1px);
+    box-shadow: 0 0 25px rgba(123,97,255,0.22);
+  }
+
+  #karirku-app /* RIASEC chips preview */
+  .riasec-chips {
+    display: flex; gap: 10px; flex-wrap: wrap; justify-content: center;
+    max-width: 500px;
+  }
+  #karirku-app .chip {
+    padding: 8px 16px; border-radius: 20px; font-size: 13px; font-weight: 600;
+    letter-spacing: 0.5px; cursor: default;
+    animation: float 4s ease-in-out infinite alternate;
+  }
+  #karirku-app .chip.R { background: var(--r-soft); color: var(--r); border: 1px solid rgba(255,107,107,0.25); animation-delay: 0s; }
+  #karirku-app .chip.I { background: var(--i-soft); color: var(--i); border: 1px solid rgba(255,179,71,0.25); animation-delay: -0.5s; }
+  #karirku-app .chip.A { background: var(--a-soft); color: var(--a); border: 1px solid rgba(199,125,255,0.25); animation-delay: -1s; }
+  #karirku-app .chip.S { background: var(--s-soft); color: var(--s); border: 1px solid rgba(86,207,225,0.25); animation-delay: -1.5s; }
+  #karirku-app .chip.E { background: var(--e-soft); color: var(--e); border: 1px solid rgba(255,159,28,0.25); animation-delay: -2s; }
+  #karirku-app .chip.C { background: var(--c-soft); color: var(--c); border: 1px solid rgba(128,237,153,0.25); animation-delay: -2.5s; }
+  @keyframes float { 0%{transform:translateY(0)} 100%{transform:translateY(-6px)} }
+
+  #karirku-app /* STATS row */
+  .hero-stats {
+    display: flex; gap: 32px; padding: 20px 36px;
+    background: var(--surface); border-radius: 16px; border: 1px solid var(--border);
+  }
+  #karirku-app .stat { text-align: center; }
+  #karirku-app .stat-num { font-family: 'Syne', sans-serif; font-size: 26px; font-weight: 800;
+    background: linear-gradient(135deg, var(--accent), var(--s)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+  #karirku-app .stat-lbl { font-size: 12px; color: var(--muted); margin-top: 2px; }
+  #karirku-app .stat-sep { width: 1px; background: var(--border); align-self: stretch; }
+
+
+  #karirku-app /* ========== RIASEC INFO MODAL ========== */
+  #riasec-modal {
+    position: fixed; inset: 0; z-index: 200;
+    display: none; align-items: center; justify-content: center;
+    padding: 20px; background: rgba(13,13,26,0.82);
+    backdrop-filter: blur(10px);
+  }
+  #karirku-app #riasec-modal.show { display: flex; }
+  #karirku-app .riasec-modal-box {
+    width: 100%; max-width: 760px; max-height: min(88vh, 760px);
+    overflow-y: auto; background: var(--surface);
+    border: 1px solid var(--border); border-radius: 22px;
+    padding: 30px; box-shadow: 0 24px 80px rgba(0,0,0,0.45);
+  }
+  #karirku-app .riasec-modal-head {
+    display: flex; justify-content: space-between; align-items: flex-start; gap: 20px;
+    margin-bottom: 22px;
+  }
+  #karirku-app .riasec-modal-head h2 { font-size: 25px; font-weight: 800; margin-bottom: 6px; }
+  #karirku-app .riasec-modal-head p { color: var(--muted); font-size: 13.5px; line-height: 1.6; max-width: 620px; }
+  #karirku-app .riasec-modal-close {
+    width: 42px; height: 42px; min-height: 42px; flex-shrink: 0;
+    border-radius: 12px; border: 1px solid var(--border);
+    background: var(--surface2); color: var(--muted); cursor: pointer;
+    font-size: 22px; line-height: 1;
+  }
+  #karirku-app .riasec-modal-close:hover { color: var(--text); border-color: rgba(255,255,255,0.2); }
+  #karirku-app .riasec-info-grid {
+    display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin: 18px 0 24px;
+  }
+  #karirku-app .riasec-info-card {
+    padding: 15px; border-radius: 14px; background: var(--surface2);
+    border: 1px solid var(--border);
+  }
+  #karirku-app .riasec-info-card .ric-title { display:flex; align-items:center; gap:9px; font-weight:700; font-size:14px; margin-bottom:5px; }
+  #karirku-app .riasec-info-card .ric-code {
+    width:27px; height:27px; border-radius:8px; display:flex; align-items:center; justify-content:center;
+    font-family:'Syne',sans-serif; font-weight:800; font-size:12px;
+  }
+  #karirku-app .riasec-info-card p { color:var(--muted); font-size:12px; line-height:1.55; }
+  #karirku-app .riasec-info-section { margin-top: 20px; }
+  #karirku-app .riasec-info-section h3 { font-family:'Syne',sans-serif; font-size:15px; margin-bottom:8px; }
+  #karirku-app .riasec-info-section p { color:var(--muted); font-size:13.5px; line-height:1.65; }
+  #karirku-app .riasec-example {
+    margin-top: 12px; padding: 14px 16px; border-radius: 12px;
+    background: var(--surface2); border: 1px solid var(--border);
+    color: var(--muted); font-size: 13px; line-height: 1.6;
+  }
+  #karirku-app .riasec-example strong { color: var(--text); }
+  #karirku-app .riasec-modal-footer {
+    display:flex; justify-content:flex-end; margin-top:24px; padding-top:18px;
+    border-top:1px solid var(--border);
+  }
+  #karirku-app .riasec-modal-footer .btn-primary { padding: 11px 22px; font-size:14px; }
+  @media(max-width:640px){
+    #karirku-app #riasec-modal { padding: 10px; }
+    #karirku-app .riasec-modal-box { padding: 22px 18px; border-radius:18px; max-height:92vh; }
+    #karirku-app .riasec-modal-head h2 { font-size:21px; }
+    #karirku-app .riasec-info-grid { grid-template-columns:1fr; }
+    #karirku-app .riasec-modal-footer .btn-primary { width:100%; }
+  }
+
+  #karirku-app /* ========== QUIZ PAGE ========== */
+  #page-quiz {
+    position: relative; z-index: 1;
+  }
+  #karirku-app .quiz-wrap {
+    flex: 1; display: flex; flex-direction: column; align-items: center;
+    padding: 40px 20px; gap: 24px; max-width: 720px; margin: 0 auto; width: 100%;
+  }
+
+  #karirku-app /* Progress */
+  .quiz-progress-wrap { width: 100%; }
+  #karirku-app .progress-top {
+    display: flex; justify-content: space-between; align-items: center;
+    margin-bottom: 10px;
+  }
+  #karirku-app .progress-label { font-size: 13px; color: var(--muted); }
+  #karirku-app .progress-count { display: none; }
+  #karirku-app .progress-bar-bg {
+    height: 6px; background: var(--surface2); border-radius: 3px; overflow: hidden;
+  }
+  #karirku-app .progress-bar-fill {
+    height: 100%; border-radius: 3px;
+    background: linear-gradient(90deg, var(--accent), var(--accent2));
+    transition: width 0.5s cubic-bezier(0.4,0,0.2,1);
+  }
+
+  #karirku-app /* Section header */
+  .quiz-section-header {
+    text-align: center; padding: 16px 24px; border-radius: 12px;
+    border: 1px solid var(--border); width: 100%;
+    display: flex; align-items: center; gap: 14px;
+  }
+  #karirku-app .section-icon {
+    width: 44px; height: 44px; border-radius: 12px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 22px; flex-shrink: 0;
+  }
+  #karirku-app .section-info { text-align: left; }
+  #karirku-app .section-info h3 { font-family: 'Syne', sans-serif; font-size: 15px; font-weight: 700; }
+  #karirku-app .section-info p { font-size: 12px; color: var(--muted); margin-top: 2px; }
+
+  #karirku-app /* Card question */
+  .quiz-card {
+    width: 100%; background: var(--surface);
+    border: 1px solid var(--border); border-radius: 20px;
+    overflow: hidden;
+    animation: slideIn 0.35s cubic-bezier(0.4,0,0.2,1);
+  }
+  @keyframes slideIn { from{opacity:0;transform:translateY(18px)} to{opacity:1;transform:translateY(0)} }
+
+  #karirku-app .quiz-card-header {
+    padding: 24px 28px 16px;
+    border-bottom: 1px solid var(--border);
+  }
+  #karirku-app .q-num { font-size: 11px; font-weight: 600; letter-spacing: 1.5px; text-transform: uppercase; margin-bottom: 10px; }
+  #karirku-app .q-text {
+    font-family: 'Syne', sans-serif; font-size: 20px; font-weight: 700; line-height: 1.35;
+  }
+
+  #karirku-app /* Likert options */
+  .likert-row {
+    display: grid; grid-template-columns: repeat(5, 1fr);
+    gap: 8px; padding: 20px 28px;
+  }
+  #karirku-app .likert-label-row {
+    display: flex; justify-content: space-between;
+    padding: 0 28px 20px;
+    font-size: 11px; color: var(--muted);
+  }
+  #karirku-app .likert-btn {
+    display: flex; flex-direction: column; align-items: center; gap: 6px;
+    padding: 14px 8px; border-radius: 12px;
+    border: 1.5px solid var(--border); background: var(--surface2);
+    cursor: pointer; transition: all 0.2s; color: var(--muted);
+  }
+  #karirku-app .likert-btn:hover { border-color: rgba(255,255,255,0.2); color: var(--text); transform: translateY(-2px); }
+  #karirku-app .likert-btn.selected { color: var(--text); transform: translateY(-2px); }
+  #karirku-app .likert-btn .lk-num { font-family: 'Syne', sans-serif; font-size: 20px; font-weight: 800; }
+  #karirku-app .likert-btn .lk-dot {
+    width: 6px; height: 6px; border-radius: 50%;
+    background: currentColor; transition: transform 0.2s;
+  }
+  #karirku-app .likert-btn.selected .lk-dot { transform: scale(1.5); }
+
+  #karirku-app /* Likert colors by value */
+  .likert-btn[data-val="1"].selected { border-color: var(--r); background: var(--r-soft); color: var(--r); }
+  #karirku-app .likert-btn[data-val="2"].selected { border-color: var(--i); background: var(--i-soft); color: var(--i); }
+  #karirku-app .likert-btn[data-val="3"].selected { border-color: var(--muted); background: var(--surface2); color: var(--text); }
+  #karirku-app .likert-btn[data-val="4"].selected { border-color: var(--s); background: var(--s-soft); color: var(--s); }
+  #karirku-app .likert-btn[data-val="5"].selected { border-color: var(--c); background: var(--c-soft); color: var(--c); }
+
+  #karirku-app /* Nav buttons */
+  .quiz-nav {
+    display: flex; gap: 12px; width: 100%; justify-content: space-between; align-items: center;
+    flex-wrap: wrap;
+  }
+  #karirku-app .quiz-nav-actions {
+    display: flex; gap: 10px; width: 100%; justify-content: space-between;
+  }
+  #karirku-app .btn-back {
+    padding: 12px 24px; border-radius: 24px; border: 1px solid var(--border);
+    background: transparent; color: var(--muted); cursor: pointer;
+    font-family: 'Plus Jakarta Sans', sans-serif; font-size: 14px; transition: all 0.2s;
+  }
+  #karirku-app .btn-back:hover { color: var(--text); border-color: rgba(255,255,255,0.2); }
+  #karirku-app .btn-next {
+    padding: 12px 28px; border-radius: 24px; border: none;
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    color: #fff; cursor: pointer; font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 14px; font-weight: 600; transition: all 0.25s;
+    opacity: 0.5; pointer-events: none;
+    box-shadow: 0 0 20px rgba(123,97,255,0.25);
+  }
+  #karirku-app .btn-next.enabled { opacity: 1; pointer-events: all; }
+  #karirku-app .btn-next.enabled:hover { transform: translateY(-1px); box-shadow: 0 0 30px rgba(123,97,255,0.4); }
+
+  #karirku-app /* Mini RIASEC score pills */
+  .live-scores {
+    display: flex; gap: 8px; flex-wrap: wrap; justify-content: center;
+    width: 100%;
+  }
+  #karirku-app .score-pill {
+    display: flex; align-items: center; gap: 6px;
+    padding: 6px 12px; border-radius: 20px;
+    font-size: 12px; font-weight: 600; background: var(--surface2);
+    border: 1px solid var(--border); transition: all 0.3s;
+  }
+  #karirku-app .score-pill .pill-bar {
+    width: 32px; height: 4px; border-radius: 2px; background: var(--border); overflow: hidden;
+  }
+  #karirku-app .score-pill .pill-fill { height: 100%; border-radius: 2px; transition: width 0.5s; }
+
+  #karirku-app /* ========== RESULT PAGE ========== */
+  #page-result {
+    position: relative; z-index: 1; overflow-y: auto;
+  }
+  #karirku-app .result-wrap {
+    max-width: 900px; margin: 0 auto; padding: 40px 20px; width: 100%;
+  }
+
+  #karirku-app .result-hero {
+    text-align: center; margin-bottom: 40px;
+  }
+  #karirku-app .result-hero h2 {
+    font-size: clamp(26px, 4vw, 40px); font-weight: 800; margin-bottom: 10px;
+  }
+  #karirku-app .result-type-badge {
+    display: inline-flex; align-items: center; gap: 10px;
+    padding: 10px 22px; border-radius: 28px;
+    font-family: 'Syne', sans-serif; font-size: 15px; font-weight: 700;
+    margin-bottom: 14px;
+  }
+  #karirku-app .result-hero p { color: var(--muted); font-size: 15px; max-width: 480px; margin: 0 auto; }
+
+  #karirku-app .result-grid {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 28px;
+  }
+  @media(max-width:640px) { #karirku-app .result-grid { grid-template-columns: 1fr; } }
+
+  #karirku-app .result-card {
+    background: var(--surface); border: 1px solid var(--border); border-radius: 18px;
+    padding: 24px;
+  }
+  #karirku-app .result-card h3 {
+    font-family: 'Syne', sans-serif; font-size: 14px; font-weight: 700;
+    color: var(--muted); letter-spacing: 1px; text-transform: uppercase;
+    margin-bottom: 16px;
+  }
+
+  #karirku-app /* Radar chart container */
+  .chart-container { position: relative; height: 280px; }
+
+  #karirku-app /* Score bars */
+  .score-bars { display: flex; flex-direction: column; gap: 12px; }
+  #karirku-app .score-bar-item { display: flex; align-items: center; gap: 12px; }
+  #karirku-app .sbi-label {
+    width: 24px; height: 24px; border-radius: 6px;
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'Syne', sans-serif; font-size: 12px; font-weight: 800; flex-shrink: 0;
+  }
+  #karirku-app .sbi-name { font-size: 13px; min-width: 80px; }
+  #karirku-app .sbi-bar-bg {
+    flex: 1; height: 8px; background: var(--surface2); border-radius: 4px; overflow: hidden;
+  }
+  #karirku-app .sbi-bar-fill { height: 100%; border-radius: 4px; transition: width 1s cubic-bezier(0.4,0,0.2,1); }
+  #karirku-app .sbi-score { font-family: 'Syne', sans-serif; font-size: 13px; font-weight: 700; min-width: 30px; text-align: right; }
+
+  #karirku-app /* Career cards */
+  .careers-grid {
+    display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 12px;
+    margin-bottom: 28px;
+  }
+  #karirku-app .career-card {
+    background: var(--surface); border: 1px solid var(--border); border-radius: 14px;
+    padding: 18px; transition: all 0.2s; cursor: default;
+  }
+  #karirku-app .career-card strong { color: var(--text); }
+  #karirku-app .career-card:hover { transform: translateY(-3px); border-color: rgba(255,255,255,0.15); }
+  #karirku-app .career-icon { font-size: 28px; margin-bottom: 10px; }
+  #karirku-app .career-title { font-family: 'Syne', sans-serif; font-size: 14px; font-weight: 700; margin-bottom: 4px; }
+  #karirku-app .career-match {
+    font-size: 11px; font-weight: 600; padding: 3px 8px; border-radius: 10px;
+    display: inline-block;
+  }
+  #karirku-app .match-high { background: var(--c-soft); color: var(--c); }
+  #karirku-app .match-med { background: var(--i-soft); color: var(--i); }
+  #karirku-app .match-low { background: var(--s-soft); color: var(--s); }
+  #karirku-app .match-poor { background: var(--e-soft); color: var(--e); }
+
+  #karirku-app /* 3-letter RIASEC profile */
+  .riasec-profile-breakdown {
+    display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px;
+    max-width: 680px; margin: 18px auto 0; text-align: left;
+  }
+  #karirku-app .riasec-profile-item {
+    padding: 10px 12px; border: 1px solid var(--border); border-radius: 12px;
+    background: var(--surface);
+  }
+  #karirku-app .riasec-profile-code { font-family: 'Syne', sans-serif; font-size: 11px; font-weight: 800; margin-bottom: 3px; }
+  #karirku-app .riasec-profile-name { font-size: 12px; font-weight: 600; }
+  #karirku-app .riasec-profile-role { font-size: 10px; color: var(--muted); margin-top: 3px; }
+  @media(max-width:640px) { #karirku-app .riasec-profile-breakdown { grid-template-columns: 1fr; max-width: 480px; } }
+
+  #karirku-app /* Trait tags */
+  .traits-wrap { display: flex; flex-wrap: wrap; gap: 8px; }
+  #karirku-app .trait-tag {
+    padding: 6px 14px; border-radius: 20px; font-size: 12px; font-weight: 500;
+    background: var(--surface2); border: 1px solid var(--border); color: var(--muted);
+  }
+
+  #karirku-app /* CTA section */
+  .email-result-box, #karirku-app .feedback-box { margin: 0 0 20px; }
+
+  #karirku-app .result-cta {
+    display: flex; gap: 12px; justify-content: center; margin-top: 12px; flex-wrap: wrap;
+  }
+  #karirku-app .btn-share {
+    padding: 12px 24px; border-radius: 24px; border: 1px solid var(--border);
+    background: var(--surface); color: var(--muted); cursor: pointer;
+    font-family: 'Plus Jakarta Sans', sans-serif; font-size: 14px; transition: all 0.2s;
+  }
+  #karirku-app .btn-share:hover { border-color: rgba(255,255,255,0.2); color: var(--text); }
+  #karirku-app .btn-retake {
+    padding: 12px 24px; border-radius: 24px;
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    border: none; color: #fff; cursor: pointer;
+    font-family: 'Plus Jakarta Sans', sans-serif; font-size: 14px; font-weight: 600; transition: all 0.2s;
+  }
+  #karirku-app .btn-retake:hover { transform: translateY(-1px); }
+
+  #karirku-app /* ========== CONSENT PAGE ========== */
+  .consent-wrap {
+    position: relative; z-index: 1; flex: 1;
+    display: flex; flex-direction: column; align-items: center;
+    padding: 60px 24px 80px; gap: 8px;
+  }
+  #karirku-app .consent-box {
+    width: 100%; max-width: 640px;
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 20px; padding: 40px 36px;
+  }
+  #karirku-app .consent-box h1 {
+    font-size: 28px; font-weight: 800; letter-spacing: -0.5px; margin-bottom: 4px;
+  }
+  #karirku-app .consent-box .consent-sub {
+    color: var(--muted); font-size: 14px; margin-bottom: 28px;
+  }
+  #karirku-app .consent-box h3 {
+    font-size: 15px; font-weight: 700; margin: 24px 0 10px;
+    color: var(--text);
+  }
+  #karirku-app .consent-box h3:first-of-type { margin-top: 0; }
+  #karirku-app .consent-box p, #karirku-app .consent-box li {
+    font-size: 14.5px; line-height: 1.7; color: var(--muted);
+  }
+  #karirku-app .consent-box ul { padding-left: 20px; margin: 6px 0; }
+  #karirku-app .consent-box li { margin-bottom: 6px; }
+  #karirku-app .consent-box li strong { color: var(--text); }
+  #karirku-app .consent-minor-note {
+    margin-top: 22px; padding: 14px 16px; border-radius: 12px;
+    background: var(--a-soft); border: 1px solid rgba(199,125,255,0.25);
+    font-size: 13.5px; color: var(--text); line-height: 1.6;
+  }
+  #karirku-app .consent-contact {
+    margin-top: 22px; padding: 14px 16px; border-radius: 12px;
+    background: var(--surface2); border: 1px solid var(--border);
+    font-size: 13.5px; color: var(--muted); line-height: 1.6;
+  }
+  #karirku-app .consent-contact strong { color: var(--text); }
+  #karirku-app .consent-agree {
+    display: flex; align-items: flex-start; gap: 12px;
+    margin-top: 28px; padding-top: 24px; border-top: 1px solid var(--border);
+    cursor: pointer;
+  }
+  #karirku-app .consent-agree input[type="checkbox"] {
+    appearance: none; -webkit-appearance: none;
+    width: 20px; height: 20px; flex-shrink: 0; margin-top: 2px;
+    border: 1.5px solid var(--border); border-radius: 6px;
+    background: var(--surface2); cursor: pointer; position: relative;
+    transition: all 0.2s;
+  }
+  #karirku-app .consent-agree input[type="checkbox"]:checked {
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    border-color: transparent;
+  }
+  #karirku-app .consent-agree input[type="checkbox"]:checked::after {
+    content: '✓'; position: absolute; inset: 0;
+    display: flex; align-items: center; justify-content: center;
+    color: #fff; font-size: 13px; font-weight: 700;
+  }
+  #karirku-app .consent-agree span { font-size: 14px; color: var(--text); line-height: 1.6; }
+  #karirku-app .consent-cta {
+    display: flex; gap: 12px; flex-wrap: wrap; margin-top: 28px;
+  }
+  #karirku-app .btn-primary:disabled {
+    opacity: 0.4; cursor: not-allowed; box-shadow: none; transform: none;
+  }
+  @media(max-width:700px){
+    #karirku-app .consent-box { padding: 28px 22px; border-radius: 16px; }
+    #karirku-app .consent-box h1 { font-size: 22px; }
+    #karirku-app .consent-cta { flex-direction: column; }
+    #karirku-app .consent-cta button { width: 100%; }
+  }
+
+  #karirku-app /* ========== FEEDBACK BOX ========== */
+  .feedback-box {
+    max-width: 520px; margin: 16px auto 0; padding: 20px 22px;
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 16px; text-align: left;
+  }
+  #karirku-app .feedback-box .fb-title { font-size: 14.5px; font-weight: 700; color: var(--text); margin-bottom: 14px; }
+  #karirku-app .fb-row { margin-bottom: 16px; }
+  #karirku-app .fb-row label { display: block; font-size: 13px; color: var(--muted); margin-bottom: 8px; }
+  #karirku-app .fb-rating { display: flex; gap: 6px; }
+  #karirku-app .fb-rating button {
+    width: 36px; height: 36px; border-radius: 10px;
+    border: 1px solid var(--border); background: var(--surface2);
+    color: var(--muted); font-size: 14px; font-weight: 700; cursor: pointer;
+    transition: all 0.15s;
+  }
+  #karirku-app .fb-rating button.active {
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    color: #fff; border-color: transparent;
+  }
+  #karirku-app .feedback-box textarea {
+    width: 100%; padding: 12px 14px; border-radius: 10px;
+    background: var(--surface2); border: 1px solid var(--border);
+    color: var(--text); font-size: 13.5px; font-family: inherit;
+    outline: none; resize: vertical; min-height: 70px;
+  }
+  #karirku-app .feedback-box textarea:focus { border-color: var(--accent); }
+  #karirku-app .feedback-sent-note { font-size: 12px; color: var(--muted); margin-top: 4px; }
+
+  #karirku-app /* ========== EMAIL RESULT BOX ========== */
+  .email-result-box {
+    max-width: 520px; margin: 28px auto 0; padding: 20px 22px;
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 16px; text-align: left;
+  }
+  #karirku-app .email-result-box .er-title { font-size: 14.5px; font-weight: 700; color: var(--text); margin-bottom: 4px; }
+  #karirku-app .email-result-box .er-hint { font-size: 12.5px; color: var(--muted); margin-bottom: 14px; line-height: 1.5; }
+  #karirku-app .email-result-row { display: flex; gap: 10px; flex-wrap: wrap; }
+  #karirku-app .email-result-row input[type="email"] {
+    flex: 1; min-width: 180px; padding: 11px 14px; border-radius: 10px;
+    background: var(--surface2); border: 1px solid var(--border);
+    color: var(--text); font-size: 14px; font-family: inherit; outline: none;
+  }
+  #karirku-app .email-result-row input[type="email"]:focus { border-color: var(--accent); }
+  #karirku-app .email-result-status { font-size: 12.5px; margin-top: 10px; }
+  #karirku-app .email-result-status.success { color: #6ee7a0; }
+  #karirku-app .email-result-status.error { color: #ff8a8a; }
+
+  #karirku-app /* ========== PROFILE PAGE ========== */
+  .profile-box { width: 100%; max-width: 640px; background: var(--surface); border: 1px solid var(--border); border-radius: 20px; padding: 40px 36px; }
+  #karirku-app .profile-box h1 { font-size: 28px; font-weight: 800; letter-spacing: -0.5px; margin-bottom: 4px; }
+  #karirku-app .profile-box .consent-sub { color: var(--muted); font-size: 14px; margin-bottom: 28px; }
+  #karirku-app .field-group { margin-bottom: 20px; }
+  #karirku-app .field-group label { display: block; font-size: 13.5px; font-weight: 600; color: var(--text); margin-bottom: 6px; }
+  #karirku-app .field-group .field-hint { font-size: 12.5px; color: var(--muted); margin-top: 5px; line-height: 1.5; }
+  #karirku-app .field-group input[type="text"], #karirku-app .field-group input[type="number"], #karirku-app .field-group select {
+    width: 100%; padding: 12px 14px; border-radius: 10px;
+    background: var(--surface2); border: 1px solid var(--border);
+    color: var(--text); font-size: 14.5px; font-family: inherit;
+    outline: none; transition: border-color 0.2s;
+  }
+  #karirku-app .field-group input:focus, #karirku-app .field-group select:focus { border-color: var(--accent); }
+  #karirku-app .field-group select { appearance: none; cursor: pointer; }
+  #karirku-app .field-optional-tag {
+    display: inline-block; font-size: 11px; font-weight: 600; color: var(--accent2);
+    background: var(--a-soft); padding: 2px 8px; border-radius: 6px; margin-left: 8px;
+  }
+  #karirku-app .conditional-field { display: none; }
+  #karirku-app .conditional-field.show { display: block; }
+  @media(max-width:700px){ #karirku-app .profile-box { padding: 28px 22px; border-radius: 16px; } #karirku-app .profile-box h1 { font-size: 22px; } }
+
+  #karirku-app /* ========== ADMIN PAGE ========== */
+  #page-admin {
+    position: relative; z-index: 1; overflow-y: auto;
+  }
+  #karirku-app .admin-wrap {
+    max-width: 1100px; margin: 0 auto; padding: 32px 20px; width: 100%;
+  }
+  #karirku-app .admin-header {
+    display: flex; align-items: center; justify-content: space-between;
+    margin-bottom: 28px; flex-wrap: wrap; gap: 16px;
+  }
+  #karirku-app .admin-header h2 {
+    font-family: 'Syne', sans-serif; font-size: 24px; font-weight: 800;
+  }
+  #karirku-app .admin-badge {
+    padding: 6px 14px; border-radius: 20px; font-size: 12px;
+    background: rgba(128,237,153,0.12); color: var(--c); border: 1px solid rgba(128,237,153,0.25);
+    font-weight: 600;
+  }
+  #karirku-app .admin-stats-grid {
+    display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 28px;
+  }
+  @media(max-width:700px){ #karirku-app .admin-stats-grid { grid-template-columns: repeat(2,1fr); } }
+  #karirku-app .admin-stat-card {
+    background: var(--surface); border: 1px solid var(--border); border-radius: 14px;
+    padding: 18px 20px;
+  }
+  #karirku-app .admin-stat-card .label { font-size: 12px; color: var(--muted); margin-bottom: 8px; }
+  #karirku-app .admin-stat-card .value {
+    font-family: 'Syne', sans-serif; font-size: 28px; font-weight: 800;
+  }
+  #karirku-app .admin-stat-card .delta { font-size: 12px; margin-top: 4px; }
+  #karirku-app .delta-up { color: var(--c); }
+  #karirku-app .delta-down { color: var(--r); }
+
+  #karirku-app .admin-row { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 24px; }
+  @media(max-width:700px){ #karirku-app .admin-row { grid-template-columns: 1fr; } }
+  #karirku-app .admin-card {
+    background: var(--surface); border: 1px solid var(--border); border-radius: 16px;
+    padding: 22px;
+  }
+  #karirku-app .admin-card h3 {
+    font-family: 'Syne', sans-serif; font-size: 14px; font-weight: 700;
+    color: var(--muted); letter-spacing: 1px; text-transform: uppercase; margin-bottom: 18px;
+  }
+  #karirku-app .chart-container-sm { position: relative; height: 200px; }
+  #karirku-app .chart-container-md { position: relative; height: 240px; }
+
+  #karirku-app /* Table */
+  .data-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  #karirku-app .data-table th {
+    text-align: left; padding: 10px 12px;
+    color: var(--muted); font-weight: 600; letter-spacing: 0.5px; font-size: 11px; text-transform: uppercase;
+    border-bottom: 1px solid var(--border);
+  }
+  #karirku-app .data-table td {
+    padding: 12px; border-bottom: 1px solid rgba(255,255,255,0.04);
+  }
+  #karirku-app .data-table tr:hover td { background: var(--surface2); }
+  #karirku-app .table-code { font-family: monospace; font-size: 12px; color: var(--accent); }
+  #karirku-app .table-badge {
+    padding: 3px 8px; border-radius: 8px; font-size: 11px; font-weight: 600;
+  }
+  #karirku-app .filter-row { display: flex; gap: 8px; margin-bottom: 14px; flex-wrap: wrap; }
+  #karirku-app .filter-btn {
+    padding: 6px 14px; border-radius: 16px; border: 1px solid var(--border);
+    background: var(--surface2); color: var(--muted); cursor: pointer;
+    font-size: 12px; font-family: 'Plus Jakarta Sans', sans-serif; transition: all 0.2s;
+  }
+  #karirku-app .filter-btn:hover, #karirku-app .filter-btn.active { border-color: var(--accent); color: var(--accent); }
+  #karirku-app .search-box {
+    padding: 8px 14px; border-radius: 10px; border: 1px solid var(--border);
+    background: var(--surface2); color: var(--text); font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 13px; outline: none; transition: border 0.2s; width: 180px;
+  }
+  #karirku-app .search-box:focus { border-color: rgba(255,255,255,0.25); }
+  #karirku-app .export-btn {
+    margin-left: auto; padding: 8px 18px; border-radius: 10px;
+    background: var(--c-soft); border: 1px solid rgba(128,237,153,0.25);
+    color: var(--c); font-family: 'Plus Jakarta Sans', sans-serif; font-size: 13px;
+    font-weight: 600; cursor: pointer; transition: all 0.2s;
+  }
+  #karirku-app .export-btn:hover { background: rgba(128,237,153,0.22); }
+
+  #karirku-app /* Distribution bars */
+  .dist-bar-item {
+    display: flex; align-items: center; gap: 10px; margin-bottom: 10px;
+  }
+  #karirku-app .dist-label { font-size: 13px; font-weight: 600; width: 24px; flex-shrink: 0; }
+  #karirku-app .dist-bar-bg { flex: 1; height: 10px; background: var(--surface2); border-radius: 5px; overflow: hidden; }
+  #karirku-app .dist-bar-fill { height: 100%; border-radius: 5px; transition: width 1s; }
+  #karirku-app .dist-pct { font-size: 12px; color: var(--muted); min-width: 32px; text-align: right; }
+
+  #karirku-app /* Login overlay */
+  #admin-login {
+    position: fixed; inset: 0; z-index: 100;
+    background: rgba(13,13,26,0.95); backdrop-filter: blur(16px);
+    display: flex; align-items: center; justify-content: center;
+  }
+  #karirku-app .login-box {
+    background: var(--surface); border: 1px solid var(--border); border-radius: 20px;
+    padding: 40px; max-width: 380px; width: 90%; text-align: center;
+  }
+  #karirku-app .login-box h2 { font-family: 'Syne', sans-serif; font-size: 22px; font-weight: 800; margin-bottom: 6px; }
+  #karirku-app .login-box p { color: var(--muted); font-size: 14px; margin-bottom: 24px; }
+  #karirku-app .login-field {
+    width: 100%; padding: 12px 16px; border-radius: 12px;
+    border: 1px solid var(--border); background: var(--surface2);
+    color: var(--text); font-family: 'Plus Jakarta Sans', sans-serif; font-size: 14px;
+    outline: none; margin-bottom: 12px; transition: border 0.2s;
+  }
+  #karirku-app .login-field:focus { border-color: rgba(255,255,255,0.25); }
+  #karirku-app .login-btn {
+    width: 100%; padding: 13px; border-radius: 12px;
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    border: none; color: #fff; font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 15px; font-weight: 600; cursor: pointer; transition: opacity 0.2s;
+  }
+  #karirku-app .login-btn:hover { opacity: 0.9; }
+  #karirku-app .login-hint { font-size: 11px; color: var(--muted); margin-top: 10px; }
+
+  #karirku-app /* ========== MOBILE FIRST ========== */
+
+  /* Touch targets minimum 44px */
+  button { min-height: 44px; }
+  #karirku-app .likert-btn { min-height: 56px; }
+
+  @media(max-width:480px){
+    #karirku-app /* NAV: hanya brand + 1 aksi */
+    nav { padding: 14px 16px; }
+    #karirku-app .nav-links .nav-btn.active { display: none; }
+    #karirku-app .nav-links { gap: 6px; }
+    #karirku-app .nav-btn { padding: 8px 12px; font-size: 13px; }
+    #karirku-app .nav-btn.primary { padding: 8px 14px; }
+
+    #karirku-app /* HERO */
+    .hero { padding: 32px 16px; gap: 20px; }
+    #karirku-app .hero h1 { font-size: 32px; letter-spacing: -1px; }
+    #karirku-app .hero-sub { font-size: 15px; }
+    #karirku-app .hero-badge { font-size: 12px; padding: 7px 14px; }
+    #karirku-app .btn-primary, #karirku-app .btn-ghost { width: 100%; padding: 15px 20px; font-size: 15px; }
+    #karirku-app .hero-cta { flex-direction: column; width: 100%; }
+    #karirku-app .hero-stats {
+      gap: 0; padding: 0; background: none; border: none;
+      display: grid; grid-template-columns: 1fr 1fr; gap: 10px; width: 100%;
+    }
+    #karirku-app .stat-sep { display: none; }
+    #karirku-app .stat {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: 12px; padding: 12px; text-align: center;
+    }
+    #karirku-app .stat-num { font-size: 22px; }
+    #karirku-app .riasec-chips { gap: 8px; }
+    #karirku-app .chip { font-size: 12px; padding: 6px 12px; }
+
+    #karirku-app /* QUIZ */
+    .quiz-wrap { padding: 20px 14px; gap: 16px; }
+    #karirku-app .progress-label { font-size: 11px; max-width: 160px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    #karirku-app .progress-count { font-size: 16px; }
+    #karirku-app .quiz-section-header { padding: 12px 14px; gap: 10px; }
+    #karirku-app .section-icon { width: 36px; height: 36px; font-size: 18px; }
+    #karirku-app .section-info h3 { font-size: 14px; }
+    #karirku-app .section-info p { font-size: 11px; }
+    #karirku-app .quiz-card-header { padding: 18px 16px 14px; }
+    #karirku-app .q-text { font-size: 16px; }
+    #karirku-app .likert-row { gap: 5px; padding: 14px 12px; }
+    #karirku-app .likert-label-row { padding: 0 12px 14px; font-size: 10px; }
+    #karirku-app .likert-btn { padding: 10px 4px; border-radius: 10px; min-height: 60px; }
+    #karirku-app .likert-btn .lk-num { font-size: 18px; }
+    #karirku-app .likert-btn .lk-dot { width: 5px; height: 5px; }
+
+    #karirku-app /* Quiz nav: back/next side by side, #karirku-app scores on top */
+    .quiz-nav { flex-direction: column; gap: 10px; }
+    #karirku-app .quiz-nav-actions { width: 100%; }
+    #karirku-app .live-scores {
+      width: 100%;
+      display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px;
+    }
+    #karirku-app .score-pill { justify-content: center; padding: 5px 8px; }
+    #karirku-app .score-pill .pill-bar { display: none; }
+    #karirku-app .btn-back { flex: 1; min-width: 80px; padding: 12px 16px; font-size: 13px; }
+    #karirku-app .btn-next { flex: 2; padding: 12px 16px; font-size: 14px; }
+
+    #karirku-app /* RESULT */
+    .result-wrap { padding: 24px 14px; }
+    #karirku-app .result-hero { margin-bottom: 24px; }
+    #karirku-app .result-hero h2 { font-size: 22px; }
+    #karirku-app .result-type-badge { font-size: 13px; padding: 8px 16px; }
+    #karirku-app .result-hero p { font-size: 14px; }
+    #karirku-app .result-grid { grid-template-columns: 1fr; gap: 14px; margin-bottom: 14px; }
+    #karirku-app .result-card { padding: 18px 14px; border-radius: 14px; }
+    #karirku-app .chart-container { height: 240px; }
+    #karirku-app .sbi-name { font-size: 12px; min-width: 70px; }
+    #karirku-app .careers-grid { grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 14px; }
+    #karirku-app .career-card { padding: 14px; }
+    #karirku-app .career-icon { font-size: 22px; margin-bottom: 8px; }
+    #karirku-app .career-title { font-size: 13px; }
+    #karirku-app .email-result-box, #karirku-app .feedback-box { margin: 0 0 20px; }
+
+  #karirku-app .result-cta { flex-direction: column; }
+    #karirku-app .btn-share, #karirku-app .btn-retake { width: 100%; text-align: center; padding: 14px; }
+
+    #karirku-app /* ADMIN */
+    .admin-wrap { padding: 20px 14px; }
+    #karirku-app .admin-header { margin-bottom: 20px; }
+    #karirku-app .admin-header h2 { font-size: 20px; }
+    #karirku-app .admin-stats-grid { grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 20px; }
+    #karirku-app .admin-stat-card { padding: 14px; }
+    #karirku-app .admin-stat-card .value { font-size: 22px; }
+    #karirku-app .admin-row { grid-template-columns: 1fr; gap: 14px; margin-bottom: 14px; }
+    #karirku-app .admin-card { padding: 16px 14px; }
+    #karirku-app .filter-row { gap: 6px; }
+    #karirku-app .search-box { width: 100%; }
+    #karirku-app .filter-btn { font-size: 11px; padding: 5px 10px; }
+    #karirku-app .export-btn { margin-left: 0; width: 100%; text-align: center; margin-top: 4px; }
+
+    #karirku-app /* LOGIN */
+    .login-box { padding: 28px 20px; }
+  }
+
+  @media(max-width:380px){
+    #karirku-app .hero h1 { font-size: 26px; }
+    #karirku-app .careers-grid { grid-template-columns: 1fr; }
+    #karirku-app .likert-btn .lk-num { font-size: 15px; }
+  }
+
+  #karirku-app /* Tablets 481-768 */
+  @media(min-width:481px) and (max-width:768px){
+    nav { padding: 16px 24px; }
+    .hero { padding: 48px 24px; gap: 22px; }
+    .hero h1 { font-size: 42px; }
+    .hero-stats { gap: 20px; padding: 16px 24px; }
+    .quiz-wrap { padding: 28px 20px; gap: 18px; }
+    .likert-row { gap: 7px; padding: 16px 20px; }
+    .likert-btn .lk-num { font-size: 18px; }
+    .live-scores { width: 100%; }
+    .result-wrap { padding: 28px 20px; }
+    .admin-wrap { padding: 24px 20px; }
+    .admin-row { grid-template-columns: 1fr; }
+  }
+
+#karirku-app .result-note{margin:1rem 0;padding:.9rem 1rem;border:1px solid rgba(0,0,0,.12);border-radius:12px;font-size:.9rem;line-height:1.5}
+
+
+/* Lapisan aplikasi full-screen di atas tema WordPress */
+#karirku-app {
+  position: fixed;
+  inset: 0;
+  z-index: 999999;
+  width: 100%;
+  height: 100vh;
+  height: 100dvh;
+  overflow-x: hidden;
+  overflow-y: auto;
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  isolation: isolate;
+}
+#karirku-app, #karirku-app * { box-sizing: border-box; }
+#karirku-app .bg-orbs { position: absolute; }
+body.admin-bar #karirku-app { top: 32px; height: calc(100dvh - 32px); }
+@media screen and (max-width: 782px) {
+  body.admin-bar #karirku-app { top: 46px; height: calc(100dvh - 46px); }
+}
