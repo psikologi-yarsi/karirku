@@ -2,7 +2,7 @@
 const app = document.getElementById('karirku-app');
 if (!app) console.warn('KarirKu: #karirku-app tidak ditemukan.');
 // TODO: Ganti dengan URL Web App Apps Script setelah di-deploy
-const APPS_SCRIPT_URL = 'GANTI_DENGAN_URL_WEB_APP_APPS_SCRIPT_ANDA';
+const APPS_SCRIPT_URL = 'TEMPELKAN_URL_WEB_APP_APPS_SCRIPT_DI_SINI';
 
 // ========== DATA ==========
 const SECTIONS = [
@@ -215,10 +215,12 @@ function goPage(p) {
 // ========== CONSENT ==========
 // participantConsent: status persetujuan consent, ikut disimpan sebagai bukti riset
 let participantConsent = false;
+let participantConsentedAt = null;
 
 function toggleConsentBtn() {
   const checked = document.getElementById('consent-check').checked;
   participantConsent = checked;
+  participantConsentedAt = checked ? new Date().toISOString() : null;
   document.getElementById('consent-btn').disabled = !checked;
 }
 
@@ -287,6 +289,9 @@ let participantResult = {};
 let quizStartTime = null;
 // participantFeedback: feedback pasca-hasil yang akan ikut disimpan ke database
 let participantFeedback = { akurasi: 0, relevansi: 0, komentar: '' };
+let participantSubmissionId = '';
+let participantSubmissionSaved = false;
+let feedbackSaveTimer = null;
 
 function setFeedbackRating(type, value) {
   participantFeedback[type] = value;
@@ -294,6 +299,7 @@ function setFeedbackRating(type, value) {
   wrap.querySelectorAll('button').forEach((btn, i) => {
     btn.classList.toggle('active', i < value);
   });
+  scheduleFeedbackSave();
 }
 
 function generateUserId() {
@@ -371,6 +377,8 @@ function submitProfile() {
   // Nama disimpan HANYA di variabel lokal untuk tampilan hasil, tidak masuk participantProfile
   participantName = document.getElementById('p-nama').value.trim();
   participantUserId = generateUserId();
+  participantSubmissionId = '';
+  participantSubmissionSaved = false;
 
   participantProfile = {
     usia: usia,
@@ -574,6 +582,8 @@ function showResult() {
   };
 
   participantFeedback = { akurasi: 0, relevansi: 0, komentar: '' };
+  participantSubmissionId = (window.crypto && crypto.randomUUID) ? crypto.randomUUID() : 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, c => { const r = Math.random()*16|0; return (c==='x'?r:(r&0x3|0x8)).toString(16); });
+  participantSubmissionSaved = false;
   document.getElementById('fb-komentar').value = '';
   ['akurasi','relevansi'].forEach(type => document.getElementById('fb-' + type).querySelectorAll('button').forEach(btn => btn.classList.remove('active')));
 
@@ -635,9 +645,105 @@ function showResult() {
     });
     addToAdminDB(top, second, scores);
   },100);
+
+  saveSubmissionToSheets();
 }
 
-function retakeQuiz() { goPage('quiz'); }
+
+/* ========== GOOGLE SHEETS DATABASE ========== */
+async function postKarirKuData(payload) {
+  if (!APPS_SCRIPT_URL || APPS_SCRIPT_URL.includes('TEMPELKAN_URL')) {
+    throw new Error('URL Google Apps Script belum dipasang.');
+  }
+  const response = await fetch(APPS_SCRIPT_URL, {
+    method: 'POST',
+    redirect: 'follow',
+    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+    body: JSON.stringify(payload)
+  });
+  const text = await response.text();
+  let data;
+  try { data = JSON.parse(text); }
+  catch (_) { throw new Error('Respons server bukan JSON. Periksa deployment Apps Script.'); }
+  if (!response.ok || !data.success) {
+    throw new Error(data.message || 'Data tidak berhasil disimpan.');
+  }
+  return data;
+}
+
+async function saveSubmissionToSheets() {
+  const statusEl = app.querySelector('.feedback-sent-note');
+  if (statusEl) statusEl.textContent = 'Menyimpan hasil ke database...';
+  const responses = quizQuestions.map((q, i) => ({
+    item_no: QUESTIONS.indexOf(q) + 1,
+    dimension: q.s,
+    item: q.q,
+    response: answers[i]
+  }));
+  const payload = {
+    action: 'saveSubmission',
+    submission_uuid: participantSubmissionId,
+    participant_code: participantUserId,
+    instrument_slug: 'riasec',
+    instrument_version: '1.0',
+    started_at: quizStartTime ? new Date(quizStartTime).toISOString() : '',
+    duration_seconds: participantResult.waktu_pengerjaan_detik || 0,
+    consent_given: participantConsent === true,
+    consent_version: '1.0',
+    consented_at: participantConsentedAt,
+    demographics: participantProfile,
+    responses: responses,
+    scores: {
+      R: scores.R, I: scores.I, A: scores.A,
+      S: scores.S, E: scores.E, C: scores.C
+    },
+    result: participantResult,
+    feedback: participantFeedback,
+    source_page: window.location.href
+  };
+
+  try {
+    const data = await postKarirKuData(payload);
+    participantSubmissionSaved = true;
+    if (statusEl) statusEl.textContent = 'Hasil berhasil tersimpan. Kode partisipan: ' + (data.participant_code || participantUserId);
+    if (participantFeedback.akurasi || participantFeedback.relevansi || participantFeedback.komentar) {
+      saveFeedbackToSheets();
+    }
+  } catch (error) {
+    console.error('KarirKu database save error:', error);
+    if (statusEl) statusEl.textContent = 'Hasil belum berhasil tersimpan. Silakan hubungi pengelola KarirKu dan sampaikan kode: ' + participantUserId;
+  }
+}
+
+function scheduleFeedbackSave() {
+  if (!participantSubmissionSaved) return;
+  if (feedbackSaveTimer) clearTimeout(feedbackSaveTimer);
+  feedbackSaveTimer = setTimeout(saveFeedbackToSheets, 900);
+}
+
+async function saveFeedbackToSheets() {
+  if (!participantSubmissionSaved || !participantSubmissionId) return;
+  try {
+    await postKarirKuData({
+      action: 'updateFeedback',
+      submission_uuid: participantSubmissionId,
+      feedback: participantFeedback
+    });
+    const statusEl = app.querySelector('.feedback-sent-note');
+    if (statusEl) statusEl.textContent = 'Feedback berhasil tersimpan. Terima kasih!';
+  } catch (error) {
+    console.error('KarirKu feedback save error:', error);
+    const statusEl = app.querySelector('.feedback-sent-note');
+    if (statusEl) statusEl.textContent = 'Feedback belum tersimpan. Periksa koneksi dan coba lagi.';
+  }
+}
+
+function retakeQuiz() {
+  participantSubmissionId = '';
+  participantSubmissionSaved = false;
+  quizStartTime = Date.now();
+  goPage('quiz');
+}
 
 async function downloadResult() {
   const btn = app.querySelector('.result-cta .btn-share');
