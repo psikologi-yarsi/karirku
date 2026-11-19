@@ -1,0 +1,563 @@
+<!-- KarirKu | Tempelkan seluruh isi file ini ke tab HTML Gutenberg -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
+<div id="karirku-app">
+<div class="bg-orbs">
+  <div class="orb orb1"></div>
+  <div class="orb orb2"></div>
+  <div class="orb orb3"></div>
+</div>
+
+
+<!-- ========== RIASEC INFO MODAL ========== -->
+<div id="riasec-modal" role="dialog" aria-modal="true" aria-labelledby="riasec-modal-title" onclick="closeRIASECInfo(event)">
+  <div class="riasec-modal-box" onclick="event.stopPropagation()">
+    <div class="riasec-modal-head">
+      <div>
+        <h2 id="riasec-modal-title">Mengenal RIASEC</h2>
+        <p>RIASEC adalah kerangka untuk memahami pola minat seseorang terhadap aktivitas dan lingkungan kerja. KarirKu menggunakan enam tipe RIASEC sebagai dasar untuk menggambarkan profil minat dan mengeksplorasi pilihan karier.</p>
+      </div>
+      <button class="riasec-modal-close" onclick="closeRIASECInfo()" aria-label="Tutup penjelasan RIASEC">×</button>
+    </div>
+
+    <div class="riasec-info-grid">
+      <div class="riasec-info-card"><div class="ric-title"><span class="ric-code" style="background:var(--r-soft);color:var(--r)">R</span>Realistic</div><p>Ketertarikan pada aktivitas yang praktis, teknis, menggunakan alat, benda, atau lingkungan fisik.</p></div>
+      <div class="riasec-info-card"><div class="ric-title"><span class="ric-code" style="background:var(--i-soft);color:var(--i)">I</span>Investigative</div><p>Ketertarikan pada mencari tahu, menganalisis informasi, melakukan penelitian, dan memecahkan masalah.</p></div>
+      <div class="riasec-info-card"><div class="ric-title"><span class="ric-code" style="background:var(--a-soft);color:var(--a)">A</span>Artistic</div><p>Ketertarikan pada kreativitas, ekspresi, desain, dan kesempatan untuk menghasilkan gagasan atau karya.</p></div>
+      <div class="riasec-info-card"><div class="ric-title"><span class="ric-code" style="background:var(--s-soft);color:var(--s)">S</span>Social</div><p>Ketertarikan pada membantu, mengajar, membimbing, dan berinteraksi dengan orang lain.</p></div>
+      <div class="riasec-info-card"><div class="ric-title"><span class="ric-code" style="background:var(--e-soft);color:var(--e)">E</span>Enterprising</div><p>Ketertarikan pada memimpin, memengaruhi, mengambil inisiatif, dan mencapai tujuan bersama.</p></div>
+      <div class="riasec-info-card"><div class="ric-title"><span class="ric-code" style="background:var(--c-soft);color:var(--c)">C</span>Conventional</div><p>Ketertarikan pada keteraturan, ketelitian, pengelolaan informasi, dan aktivitas yang terstruktur.</p></div>
+    </div>
+
+    <div class="riasec-info-section">
+      <h3>Bagaimana RIASEC digunakan di KarirKu?</h3>
+      <p>Kamu akan menilai seberapa sesuai berbagai aktivitas dengan minatmu. Jawabanmu kemudian digunakan untuk menghitung skor pada keenam tipe RIASEC. Tiga tipe dengan skor tertinggi membentuk <strong style="color:var(--text)">kode RIASEC tiga huruf</strong>, yang menggambarkan pola utama minatmu.</p>
+      <div class="riasec-example"><strong>Contoh:</strong> jika tiga skor tertinggi adalah Investigative (I), Conventional (C), dan Artistic (A), maka kode profilmu adalah <strong>ICA</strong>. Kode ini digunakan sebagai salah satu dasar untuk mengeksplorasi bidang studi dan karier yang relevan.</div>
+    </div>
+
+    <div class="riasec-info-section">
+      <h3>Yang perlu diingat</h3>
+      <p>Profil RIASEC menggambarkan <strong style="color:var(--text)">pola minat</strong>, bukan kemampuan, prestasi, atau jaminan bahwa suatu karier pasti cocok untukmu. Hasil KarirKu sebaiknya digunakan sebagai bahan eksplorasi bersama informasi lain, seperti kemampuan, nilai pribadi, pengalaman, dan peluang pendidikan maupun pekerjaan.</p>
+    </div>
+
+    <div class="riasec-modal-footer">
+      <button class="btn-primary" onclick="closeRIASECInfo(); goPage('consent')">Mulai Tes ✦</button>
+    </div>
+  </div>
+</div>
+
+<!-- ========== PAGE: LANDING ========== -->
+<div id="page-home" class="page active">
+  <nav>
+    <div class="brand">Karir<span>Ku</span></div>
+    <div class="nav-links">
+      <button class="nav-btn active" onclick="goPage('home')">Beranda</button>
+      <button class="nav-btn" onclick="goPage('admin')">Admin</button>
+      <button class="nav-btn primary" onclick="goPage('consent')">Mulai Tes →</button>
+    </div>
+  </nav>
+  <div class="hero">
+    <div class="hero-badge"><span class="dot"></span> Berbasis Metodologi RIASEC Holland</div>
+    <h1>Temukan <span class="highlight">Jalur Karir</span><br>yang Tepat Untukmu</h1>
+    <p class="hero-sub">Tes minat karier 42 soal — kenali kekuatanmu dan dapatkan rekomendasi profesi yang sesuai.</p>
+    <div class="riasec-chips">
+      <span class="chip R">Realistic</span>
+      <span class="chip I">Investigative</span>
+      <span class="chip A">Artistic</span>
+      <span class="chip S">Social</span>
+      <span class="chip E">Enterprising</span>
+      <span class="chip C">Conventional</span>
+    </div>
+    <div class="hero-cta">
+      <button class="btn-primary" onclick="goPage('consent')">Mulai Tes Sekarang ✦</button>
+      <button class="btn-ghost" onclick="scrollInfo()">Pelajari RIASEC</button>
+    </div>
+    <div class="hero-stats">
+      <div class="stat"><div class="stat-num">42</div><div class="stat-lbl">Soal</div></div>
+      <div class="stat-sep"></div>
+      <div class="stat"><div class="stat-num">~8</div><div class="stat-lbl">Menit</div></div>
+      <div class="stat-sep"></div>
+      <div class="stat"><div class="stat-num">36</div><div class="stat-lbl">Profesi referensi</div></div>
+      <div class="stat-sep"></div>
+      <div class="stat"><div class="stat-num">6</div><div class="stat-lbl">Tipe</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- ========== PAGE: CONSENT ========== -->
+<div id="page-consent" class="page">
+  <nav>
+    <div class="brand">Karir<span>Ku</span></div>
+    <div class="nav-links">
+      <button class="nav-btn" onclick="goPage('home')">← Beranda</button>
+    </div>
+  </nav>
+  <div class="consent-wrap">
+    <div class="consent-box">
+      <h1>Persetujuan Partisipasi</h1>
+      <p class="consent-sub">Mohon baca sebelum memulai kuesioner eksplorasi minat karier KarirKu.</p>
+
+      <h3>Tentang Kuesioner Ini</h3>
+      <p>Kuesioner ini bertujuan membantu kamu mengenali profil minat karier berdasarkan ketertarikanmu terhadap berbagai aktivitas dan lingkungan kerja, menggunakan model RIASEC (Holland Code). Selain sebagai alat bantu pribadi, jawabanmu juga digunakan untuk <strong style="color:var(--text)">keperluan riset dan analisis data</strong> terkait minat karir siswa SMA dan mahasiswa tingkat awal.</p>
+
+      <h3>Yang Perlu Kamu Ketahui</h3>
+      <ul>
+        <li><strong>Bersifat sukarela</strong> — kamu boleh berhenti kapan saja tanpa konsekuensi.</li>
+        <li><strong>Waktu pengisian</strong> sekitar 8–10 menit (42 pertanyaan).</li>
+        <li><strong>Kerahasiaan data</strong> — jawabanmu disimpan secara anonim untuk analisis, tidak dipublikasikan ke pihak luar di luar keperluan riset ini.</li>
+        <li><strong>Tidak ada jawaban benar/salah</strong> — jawab sejujurnya agar hasil lebih mencerminkan profil minatmu.</li>
+        <li><strong>Data yang direkam</strong>: informasi dasar dan profil pendidikan/minat (usia, jenjang pendidikan, asal sekolah/kampus, hobi, kegiatan ekstrakurikuler/organisasi, cita-cita/karier impian, dan mata pelajaran favorit), jawaban kuesioner, hasil skor, dan tanggapan singkat setelah melihat hasil.</li>
+      </ul>
+
+      <div class="consent-minor-note">
+        <strong>Untuk peserta di bawah 18 tahun:</strong> dengan mencentang kotak persetujuan di bawah, kamu menyatakan sudah mendapat izin dari orang tua/wali untuk mengikuti kuesioner ini.
+      </div>
+
+      <div class="consent-contact">
+        Ada pertanyaan atau ingin data yang sudah dikirim dihapus dari hasil riset? Hubungi <strong>Sari Zakiah Akmal, Fakultas Psikologi YARSI — sari.zakiah\@yarsi.ac.id</strong>.
+      </div>
+
+      <label class="consent-agree">
+        <input type="checkbox" id="consent-check" onchange="toggleConsentBtn()" data-demographic="ekstrakurikuler" data-demographic="mapel">
+        <span>Saya telah membaca dan memahami informasi di atas, serta setuju untuk berpartisipasi dalam kuesioner ini secara sukarela.</span>
+      </label>
+
+      <div class="consent-cta">
+        <button class="btn-primary" id="consent-btn" disabled onclick="goPage('profile')">Mulai Kuesioner ✦</button>
+        <button class="btn-ghost" onclick="goPage('home')">Batal</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ========== PAGE: PROFILE ========== -->
+<div id="page-profile" class="page">
+  <nav>
+    <div class="brand">Karir<span>Ku</span></div>
+    <div class="nav-links">
+      <button class="nav-btn" onclick="goPage('consent')">← Kembali</button>
+    </div>
+  </nav>
+  <div class="consent-wrap">
+    <div class="profile-box">
+      <h1>Sedikit tentang kamu</h1>
+      <p class="consent-sub">Informasi ini membantu kami menyesuaikan hasil dan analisis riset.</p>
+
+      <div class="field-group">
+        <label>Nama <span class="field-optional-tag">Opsional</span></label>
+        <input type="text" id="p-nama" placeholder="Nama atau inisial, misal: 'Budi' atau 'B.S.'">
+        <div class="field-hint">Boleh dikosongkan atau diisi inisial saja. Nama ini <strong style="color:var(--text)">tidak disimpan ke database</strong> — hanya dipakai untuk menyapa kamu di halaman hasil, dan akan hilang setelah kamu meninggalkan halaman ini.</div>
+      </div>
+
+      <div class="field-group">
+        <label>Usia</label>
+        <input type="number" id="p-usia" min="10" max="30" placeholder="Contoh: 17">
+      </div>
+
+      <div class="field-group">
+        <label>Status pendidikan saat ini</label>
+        <select id="p-status" onchange="updateJenjangFields()">
+          <option value="">— Pilih —</option>
+          <option value="SMA">Siswa SMA</option>
+          <option value="SMK">Siswa SMK</option>
+          <option value="Mahasiswa">Mahasiswa</option>
+        </select>
+      </div>
+
+      <div class="field-group conditional-field" id="field-kelas">
+        <label>Kelas berapa saat ini?</label>
+        <select id="p-kelas" onchange="autoSetPeminatan()">
+          <option value="">— Pilih —</option>
+          <option value="Kelas 10">Kelas 10</option>
+          <option value="Kelas 11">Kelas 11</option>
+          <option value="Kelas 12">Kelas 12</option>
+        </select>
+      </div>
+
+      <div class="field-group conditional-field" id="field-semester">
+        <label>Semester berapa saat ini?</label>
+        <select id="p-semester">
+          <option value="">— Pilih —</option>
+          <option value="Semester 1-2">Semester 1-2</option>
+          <option value="Semester 3-4">Semester 3-4</option>
+          <option value="Semester 5-6">Semester 5-6</option>
+          <option value="Semester 7-8">Semester 7-8</option>
+          <option value=">Semester 8">Lebih dari semester 8</option>
+        </select>
+      </div>
+
+      <div class="field-group conditional-field" id="field-peminatan">
+        <label>Peminatan kamu apa?</label>
+        <select id="p-peminatan">
+          <option value="">— Pilih —</option>
+          <option value="Belum ada peminatan">Belum ada peminatan (masih kelas 10 / umum)</option>
+          <option value="IPA">IPA</option>
+          <option value="IPS">IPS</option>
+          <option value="Bahasa">Bahasa</option>
+          <option value="Lainnya">Lainnya</option>
+        </select>
+      </div>
+
+      <div class="field-group conditional-field" id="field-jurusan-smk">
+        <label>Jurusan/kompetensi keahlian kamu apa?</label>
+        <input type="text" id="p-jurusan-smk" placeholder="Contoh: Teknik Komputer dan Jaringan">
+      </div>
+
+      <div class="field-group conditional-field" id="field-prodi">
+        <label>Program studi/jurusan kamu apa?</label>
+        <input type="text" id="p-prodi" placeholder="Contoh: Teknik Informatika">
+      </div>
+
+      <div class="field-group">
+        <label>Asal sekolah/kampus</label>
+        <input type="text" id="p-institusi" placeholder="Nama sekolah atau kampus">
+      </div>
+
+      <div class="field-group">
+        <label>Domisili</label>
+        <input type="text" id="p-domisili" placeholder="Kota/provinsi">
+      </div>
+
+
+      <div class="field-group">
+        <label>Hobi/kegiatan di waktu luang <span class="demographic-limit-note">(maks. 3 pilihan)</span></label>
+        <div class="multi-check-group" class="demographic-checklist">
+            <label class="multi-check-option"><input type="checkbox" name="hobi" value="Olahraga atau aktivitas fisik" data-demographic="hobi"><span>Olahraga atau aktivitas fisik</span></label>
+            <label class="multi-check-option"><input type="checkbox" name="hobi" value="Membaca buku/komik" data-demographic="hobi"><span>Membaca buku/komik</span></label>
+            <label class="multi-check-option"><input type="checkbox" name="hobi" value="Mendengarkan atau bermain musik" data-demographic="hobi"><span>Mendengarkan atau bermain musik</span></label>
+            <label class="multi-check-option"><input type="checkbox" name="hobi" value="Menonton film/series/video" data-demographic="hobi"><span>Menonton film/series/video</span></label>
+            <label class="multi-check-option"><input type="checkbox" name="hobi" value="Bermain game" data-demographic="hobi"><span>Bermain game</span></label>
+            <label class="multi-check-option"><input type="checkbox" name="hobi" value="Menggambar, desain, atau membuat karya seni" data-demographic="hobi"><span>Menggambar, desain, atau membuat karya seni</span></label>
+            <label class="multi-check-option"><input type="checkbox" name="hobi" value="Memasak atau membuat makanan" data-demographic="hobi"><span>Memasak atau membuat makanan</span></label>
+            <label class="multi-check-option"><input type="checkbox" name="hobi" value="Menulis" data-demographic="hobi"><span>Menulis</span></label>
+            <label class="multi-check-option"><input type="checkbox" name="hobi" value="Berkumpul dengan teman/keluarga" data-demographic="hobi"><span>Berkumpul dengan teman/keluarga</span></label>
+            <label class="multi-check-option"><input type="checkbox" name="hobi" value="Jalan-jalan atau bepergian" data-demographic="hobi"><span>Jalan-jalan atau bepergian</span></label>
+            <label class="multi-check-option"><input type="checkbox" name="hobi" value="Media sosial atau membuat konten" data-demographic="hobi"><span>Media sosial atau membuat konten</span></label>
+          <label class="multi-check-option"><input type="checkbox" name="hobi" value="Lainnya" onchange="toggleOtherField(this, 'hobi-lainnya')" data-demographic="hobi"><span>Lainnya</span></label>
+        </div>
+        <div class="multi-check-other" id="hobi-lainnya" style="display:none">
+          <input type="text" id="p-hobi-lainnya" placeholder="Sebutkan hobi/kegiatan lainnya">
+        </div>
+      </div>
+
+      <div class="field-group">
+        <label>Kegiatan ekstrakurikuler/organisasi siswa <span class="demographic-limit-note">(maks. 3 pilihan)</span></label>
+        <div class="multi-check-group" class="demographic-checklist">
+            <label class="multi-check-option"><input type="checkbox" name="ekskul" value="OSIS/MPK"><span>OSIS/MPK</span></label>
+            <label class="multi-check-option"><input type="checkbox" name="ekskul" value="Pramuka"><span>Pramuka</span></label>
+            <label class="multi-check-option"><input type="checkbox" name="ekskul" value="PMR"><span>PMR</span></label>
+            <label class="multi-check-option"><input type="checkbox" name="ekskul" value="Paskibra"><span>Paskibra</span></label>
+            <label class="multi-check-option"><input type="checkbox" name="ekskul" value="Organisasi/klub olahraga"><span>Organisasi/klub olahraga</span></label>
+            <label class="multi-check-option"><input type="checkbox" name="ekskul" value="Organisasi/klub seni atau musik"><span>Organisasi/klub seni atau musik</span></label>
+            <label class="multi-check-option"><input type="checkbox" name="ekskul" value="Klub bahasa Inggris/debat"><span>Klub bahasa Inggris/debat</span></label>
+            <label class="multi-check-option"><input type="checkbox" name="ekskul" value="Klub sains/matematika"><span>Klub sains/matematika</span></label>
+            <label class="multi-check-option"><input type="checkbox" name="ekskul" value="Organisasi keagamaan/kerohanian"><span>Organisasi keagamaan/kerohanian</span></label>
+            <label class="multi-check-option"><input type="checkbox" name="ekskul" value="Jurnalistik/media sekolah"><span>Jurnalistik/media sekolah</span></label>
+          <label class="multi-check-option"><input type="checkbox" name="ekskul" value="Lainnya" onchange="toggleOtherField(this, 'ekskul-lainnya')"><span>Lainnya</span></label>
+        </div>
+        <div class="multi-check-other" id="ekskul-lainnya" style="display:none">
+          <input type="text" id="p-ekskul-lainnya" placeholder="Sebutkan kegiatan/organisasi lainnya">
+        </div>
+      </div>
+
+      <div class="field-group">
+        <label>Cita-cita/karier impian</label>
+        <input type="text" id="p-cita-cita" placeholder="Contoh: Dokter, psikolog, programmer, pengusaha">
+      </div>
+
+      
+
+      <div class="field-group">
+        <label>Dari mana kamu tahu kuesioner ini? <span class="field-optional-tag">Opsional</span></label>
+        <select id="p-sumber">
+          <option value="">— Pilih —</option>
+          <option value="Sekolah/Guru">Sekolah/Guru</option>
+          <option value="Media Sosial">Media Sosial</option>
+          <option value="Teman/Keluarga">Teman/Keluarga</option>
+          <option value="Lainnya">Lainnya</option>
+        </select>
+      </div>
+
+      <div class="consent-cta">
+        <button class="btn-primary" onclick="submitProfile()">Lanjut ke Kuis ✦</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ========== PAGE: QUIZ ========== -->
+<div id="page-quiz" class="page">
+  <nav>
+    <div class="brand">Karir<span>Ku</span></div>
+    <div class="nav-links">
+      <button class="nav-btn" onclick="goPage('home')">← Beranda</button>
+    </div>
+  </nav>
+  <div class="quiz-wrap">
+    <div class="quiz-progress-wrap">
+      <div class="progress-top">
+        <span class="progress-label" id="prog-label">Bagian 1 dari 6 — Realistic</span>
+        <span class="progress-count" id="prog-count">1 / 42</span>
+      </div>
+      <div class="progress-bar-bg"><div class="progress-bar-fill" id="prog-fill" style="width:2.4%"></div></div>
+    </div>
+<div class="quiz-card" id="quiz-card">
+      <div class="quiz-card-header">
+        <div class="q-num" id="q-num">Pertanyaan 01</div>
+        <div class="q-text" id="q-text">Saya menikmati pekerjaan yang menggunakan tangan seperti memperbaiki peralatan atau membangun sesuatu.</div>
+      </div>
+      <div class="likert-row" id="likert-row">
+        <button class="likert-btn" data-val="1" onclick="selectAnswer(1)">
+          <span class="lk-num">1</span><span class="lk-dot"></span>
+        </button>
+        <button class="likert-btn" data-val="2" onclick="selectAnswer(2)">
+          <span class="lk-num">2</span><span class="lk-dot"></span>
+        </button>
+        <button class="likert-btn" data-val="3" onclick="selectAnswer(3)">
+          <span class="lk-num">3</span><span class="lk-dot"></span>
+        </button>
+        <button class="likert-btn" data-val="4" onclick="selectAnswer(4)">
+          <span class="lk-num">4</span><span class="lk-dot"></span>
+        </button>
+        <button class="likert-btn" data-val="5" onclick="selectAnswer(5)">
+          <span class="lk-num">5</span><span class="lk-dot"></span>
+        </button>
+      </div>
+      <div class="likert-label-row">
+        <span>Sangat Tidak Setuju</span>
+        <span>Sangat Setuju</span>
+      </div>
+    </div>
+
+    <div class="quiz-nav">
+      <div class="live-scores" id="live-scores"></div>
+      <div class="quiz-nav-actions">
+        <button class="btn-back" id="btn-back" onclick="prevQ()">← Kembali</button>
+        <button class="btn-next" id="btn-next" onclick="nextQ()">Lanjut →</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ========== PAGE: RESULT ========== -->
+<div id="page-result" class="page">
+<nav>
+    <div class="brand">Karir<span>Ku</span></div>
+    <div class="nav-links">
+      <button class="nav-btn" onclick="goPage('home')">← Beranda</button>
+    </div>
+  </nav>
+  <div class="result-wrap">
+    <div class="result-note" role="note">
+<strong>Catatan interpretasi:</strong> Hasil ini menggambarkan keselarasan profil minat RIASEC dengan pola minat yang terkait dengan karier. Gunakan sebagai bahan eksplorasi, bukan sebagai penentu tunggal pilihan pendidikan atau karier.
+</div>
+
+    <div class="result-hero">
+      <div class="result-type-badge" id="result-badge"></div>
+      <p id="result-greeting" style="font-size:14px;color:var(--muted);margin-bottom:4px;"></p>
+      <span id="result-type-name" hidden aria-hidden="true"></span>
+      <h2 id="result-title">Profil minatmu</h2>
+      <p id="result-desc"></p>
+      <div class="riasec-profile-breakdown" id="riasec-profile-breakdown" aria-label="Komponen profil RIASEC"></div>
+
+    </div>
+
+    <div class="result-grid">
+      <div class="result-card">
+        <h3>Profil Minat RIASEC</h3>
+        <div class="chart-container">
+          <canvas id="radarChart"></canvas>
+        </div>
+      </div>
+      <div class="result-card">
+        <h3>Skor Detail</h3>
+        <div class="score-bars" id="score-bars"></div>
+      </div>
+    </div>
+
+    <div class="result-card" style="margin-bottom:20px">
+      <h3>Rekomendasi Karir Untukmu</h3>
+      <div class="careers-grid" id="careers-grid"></div>
+    </div>
+
+    <div class="result-grid">
+      <div class="result-card">
+        <h3>Kekuatan Utama</h3>
+        <div class="traits-wrap" id="traits-wrap"></div>
+      </div>
+      <div class="result-card">
+        <h3>Lingkungan Kerja Ideal</h3>
+        <div class="traits-wrap" id="env-wrap"></div>
+      </div>
+    </div>
+
+      <div class="email-result-box">
+        <div class="er-title">Kirim hasil ini ke email kamu (opsional)</div>
+        <div class="er-hint">Email hanya dipakai sekali untuk mengirim hasil ini dan <strong style="color:var(--text)">tidak disimpan</strong> di database kami.</div>
+        <div class="email-result-row">
+          <input type="email" id="result-email-input" placeholder="nama@email.com">
+          <button class="btn-primary" id="send-email-btn" onclick="sendResultEmail()">Kirim</button>
+        </div>
+        <div class="email-result-status" id="email-result-status"></div>
+      </div>
+
+      <div class="feedback-box">
+        <div class="fb-title">Bantu kami tingkatkan KarirKu</div>
+        <div class="fb-row">
+          <label>Seberapa sesuai hasil ini dengan gambaran minatmu menurutmu?</label>
+          <div class="fb-rating-wrap">
+            <div class="fb-rating" id="fb-akurasi" data-value="0" aria-label="Skala kesesuaian hasil">
+              <button type="button" aria-label="1 — Sangat tidak sesuai" onclick="setFeedbackRating('akurasi',1)">1</button>
+              <button type="button" aria-label="2" onclick="setFeedbackRating('akurasi',2)">2</button>
+              <button type="button" aria-label="3" onclick="setFeedbackRating('akurasi',3)">3</button>
+              <button type="button" aria-label="4" onclick="setFeedbackRating('akurasi',4)">4</button>
+              <button type="button" aria-label="5 — Sangat sesuai" onclick="setFeedbackRating('akurasi',5)">5</button>
+            </div>
+            <div class="fb-rating-anchors"><span>1 = Sangat tidak sesuai</span><span>5 = Sangat sesuai</span></div>
+          </div>
+        </div>
+        <div class="fb-row">
+          <label>Seberapa relevan rekomendasi karirnya?</label>
+          <div class="fb-rating" id="fb-relevansi" data-value="0">
+            <button type="button" onclick="setFeedbackRating('relevansi',1)">1</button>
+            <button type="button" onclick="setFeedbackRating('relevansi',2)">2</button>
+            <button type="button" onclick="setFeedbackRating('relevansi',3)">3</button>
+            <button type="button" onclick="setFeedbackRating('relevansi',4)">4</button>
+            <button type="button" onclick="setFeedbackRating('relevansi',5)">5</button>
+          </div>
+            <div class="fb-rating-anchors"><span>1 = Sangat tidak relevan</span><span>5 = Sangat relevan</span></div>
+        </div>
+        <div class="fb-row">
+          <label>Komentar tambahan (opsional)</label>
+          <textarea id="fb-komentar" placeholder="Ceritakan pendapatmu..." oninput="participantFeedback.komentar = this.value"></textarea>
+        </div>
+        <div class="feedback-sent-note">Feedback ini otomatis tersimpan bersama hasil kuesionermu.</div>
+      </div>
+
+    <div class="result-cta" style="margin-top:24px">
+      <button class="btn-share" onclick="downloadResult()">⬇ Unduh PDF</button>
+      <button class="btn-retake" onclick="retakeQuiz()">🔄 Ulangi Tes</button>
+    </div>
+  </div>
+</div>
+
+<!-- ========== PAGE: ADMIN ========== -->
+<div id="page-admin" class="page">
+  <!-- Login overlay -->
+  <div id="admin-login">
+    <div class="login-box">
+      <div style="font-size:36px;margin-bottom:12px">🔐</div>
+      <h2>Dashboard Admin</h2>
+      <p>Masuk untuk melihat data riset dan analitik</p>
+      <input class="login-field" id="login-user" type="text" placeholder="Username" />
+      <input class="login-field" id="login-pass" type="password" placeholder="Password" />
+      <button class="login-btn" onclick="doLogin()">Masuk</button>
+      <div class="login-hint">Demo: admin / admin123</div>
+    </div>
+  </div>
+
+  <nav>
+    <div class="brand">Karir<span>Ku</span> <span style="font-size:13px;color:var(--muted);font-family:'Plus Jakarta Sans',sans-serif;font-weight:400"> — Admin</span></div>
+    <div class="nav-links">
+      <button class="nav-btn" onclick="goPage('home')">← Beranda</button>
+    </div>
+  </nav>
+  <div class="admin-wrap">
+    <div class="admin-header">
+      <div>
+        <h2>Dashboard Riset</h2>
+        <p style="color:var(--muted);font-size:13px;margin-top:4px">Data pengisian kuesioner RIASEC</p>
+      </div>
+      <div style="display:flex;gap:10px;align-items:center">
+        <div class="admin-badge">● Live</div>
+        <button class="export-btn" onclick="exportCSV()">⬇ Export CSV</button>
+      </div>
+    </div>
+
+    <!-- KPI cards -->
+    <div class="admin-stats-grid">
+      <div class="admin-stat-card">
+        <div class="label">Total Responden</div>
+        <div class="value" id="kpi-total">0</div>
+        <div class="delta delta-up">↑ +12 minggu ini</div>
+      </div>
+      <div class="admin-stat-card">
+        <div class="label">Rata-rata Waktu</div>
+        <div class="value">7.4 <span style="font-size:14px;color:var(--muted)">min</span></div>
+        <div class="delta delta-up">↑ engagement tinggi</div>
+      </div>
+      <div class="admin-stat-card">
+        <div class="label">Tipe Dominan</div>
+        <div class="value" id="kpi-dom" style="font-size:20px;">—</div>
+        <div class="delta">paling banyak dipilih</div>
+      </div>
+      <div class="admin-stat-card">
+        <div class="label">Tingkat Selesai</div>
+        <div class="value">94<span style="font-size:14px;color:var(--muted)">%</span></div>
+        <div class="delta delta-up">↑ sangat tinggi</div>
+      </div>
+    </div>
+
+    <!-- Charts row -->
+    <div class="admin-row">
+      <div class="admin-card">
+        <h3>Distribusi Tipe RIASEC</h3>
+        <div id="dist-bars"></div>
+      </div>
+      <div class="admin-card">
+        <h3>Tren Pengisian per Minggu</h3>
+        <div class="chart-container-md">
+          <canvas id="trendChart"></canvas>
+        </div>
+      </div>
+    </div>
+
+    <div class="admin-row">
+      <div class="admin-card">
+        <h3>Distribusi Usia Responden</h3>
+        <div class="chart-container-sm">
+          <canvas id="ageChart"></canvas>
+        </div>
+      </div>
+      <div class="admin-card">
+        <h3>Gender</h3>
+        <div class="chart-container-sm">
+          <canvas id="genderChart"></canvas>
+        </div>
+      </div>
+    </div>
+
+    <!-- Data table -->
+    <div class="admin-card" style="margin-bottom:20px">
+      <h3>Data Responden</h3>
+      <div class="filter-row">
+        <input class="search-box" id="search-box" placeholder="Cari nama / kode..." oninput="filterTable()"/>
+        <button class="filter-btn active" onclick="setFilter('semua',this)">Semua</button>
+        <button class="filter-btn" onclick="setFilter('R',this)">Realistic</button>
+        <button class="filter-btn" onclick="setFilter('I',this)">Investigative</button>
+        <button class="filter-btn" onclick="setFilter('A',this)">Artistic</button>
+        <button class="filter-btn" onclick="setFilter('S',this)">Social</button>
+        <button class="filter-btn" onclick="setFilter('E',this)">Enterprising</button>
+        <button class="filter-btn" onclick="setFilter('C',this)">Conventional</button>
+      </div>
+      <div style="overflow-x:auto">
+        <table class="data-table" id="data-table">
+          <thead>
+            <tr>
+              <th>Kode</th><th>Nama</th><th>Usia</th><th>Tingkat</th>
+              <th>Tipe Utama</th><th>Tipe Kedua</th><th>Skor R</th><th>Skor I</th>
+              <th>Skor A</th><th>Skor S</th><th>Skor E</th><th>Skor C</th><th>Tanggal</th>
+            </tr>
+          </thead>
+          <tbody id="table-body"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
