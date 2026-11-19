@@ -593,11 +593,32 @@
   #karirku-app .field-group { margin-bottom: 20px; }
   #karirku-app .field-group label { display: block; font-size: 13.5px; font-weight: 600; color: var(--text); margin-bottom: 6px; }
   #karirku-app .field-group .field-hint { font-size: 12.5px; color: var(--muted); margin-top: 5px; line-height: 1.5; }
-  #karirku-app .field-group input[type="text"], #karirku-app .field-group input[type="number"], #karirku-app .field-group select {
-    width: 100%; padding: 12px 14px; border-radius: 10px;
-    background: var(--surface2); border: 1px solid var(--border);
-    color: var(--text); font-size: 14.5px; font-family: inherit;
-    outline: none; transition: border-color 0.2s;
+  #karirku-app .field-group input[type="text"],
+  #karirku-app .field-group input[type="number"],
+  #karirku-app .field-group select {
+    width: 100%;
+    padding: 12px 14px;
+    border-radius: 10px;
+    background: #202039 !important;
+    border: 1px solid var(--border);
+    color: #f0eff8 !important;
+    -webkit-text-fill-color: #f0eff8 !important;
+    font-size: 14.5px;
+    font-family: inherit;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+  #karirku-app .field-group input::placeholder {
+    color: rgba(240,239,248,0.48) !important;
+    -webkit-text-fill-color: rgba(240,239,248,0.48) !important;
+    opacity: 1;
+  }
+  #karirku-app .field-group input:-webkit-autofill,
+  #karirku-app .field-group input:-webkit-autofill:hover,
+  #karirku-app .field-group input:-webkit-autofill:focus {
+    -webkit-text-fill-color: #f0eff8 !important;
+    box-shadow: 0 0 0 1000px #202039 inset !important;
+    caret-color: #f0eff8;
   }
   #karirku-app .field-group input:focus, #karirku-app .field-group select:focus { border-color: var(--accent); }
   #karirku-app .field-group select {
