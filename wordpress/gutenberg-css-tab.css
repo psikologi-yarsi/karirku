@@ -873,3 +873,10 @@ body.admin-bar #karirku-app { top: 32px; height: calc(100dvh - 32px); }
 @media screen and (max-width: 782px) {
   body.admin-bar #karirku-app { top: 46px; height: calc(100dvh - 46px); }
 }
+
+
+/* Status penyimpanan hasil dan tombol pengiriman feedback */
+#karirku-app .submission-save-status { font-size: 12px; color: var(--muted); margin: 0 0 12px; }
+#karirku-app .feedback-submit-btn { margin-top: 4px; min-width: 170px; }
+#karirku-app .feedback-submit-btn:disabled { opacity: .65; cursor: not-allowed; }
+#karirku-app .feedback-sent-note { min-height: 18px; }
