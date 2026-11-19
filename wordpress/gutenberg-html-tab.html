@@ -406,6 +406,7 @@
         <div class="email-result-status" id="email-result-status"></div>
       </div>
 
+      <div class="submission-save-status" aria-live="polite">Hasil kuesioner akan disimpan otomatis setelah tes selesai.</div>
       <div class="feedback-box">
         <div class="fb-title">Bantu kami tingkatkan KarirKu</div>
         <div class="fb-row">
@@ -434,9 +435,10 @@
         </div>
         <div class="fb-row">
           <label>Komentar tambahan (opsional)</label>
-          <textarea id="fb-komentar" placeholder="Ceritakan pendapatmu..." oninput="participantFeedback.komentar = this.value; scheduleFeedbackSave()"></textarea>
+          <textarea id="fb-komentar" placeholder="Ceritakan pendapatmu..." oninput="participantFeedback.komentar = this.value"></textarea>
         </div>
-        <div class="feedback-sent-note">Feedback ini otomatis tersimpan bersama hasil kuesionermu.</div>
+        <button type="button" class="btn-primary feedback-submit-btn" id="send-feedback-btn" onclick="submitFeedback()">Kirim Penilaian</button>
+        <div class="feedback-sent-note" aria-live="polite">Isi kedua penilaian, lalu klik Kirim Penilaian. Komentar bersifat opsional.</div>
       </div>
 
     <div class="result-cta" style="margin-top:24px">
