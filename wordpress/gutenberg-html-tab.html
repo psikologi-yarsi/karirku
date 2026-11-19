@@ -434,7 +434,7 @@
         </div>
         <div class="fb-row">
           <label>Komentar tambahan (opsional)</label>
-          <textarea id="fb-komentar" placeholder="Ceritakan pendapatmu..." oninput="participantFeedback.komentar = this.value"></textarea>
+          <textarea id="fb-komentar" placeholder="Ceritakan pendapatmu..." oninput="participantFeedback.komentar = this.value; scheduleFeedbackSave()"></textarea>
         </div>
         <div class="feedback-sent-note">Feedback ini otomatis tersimpan bersama hasil kuesionermu.</div>
       </div>
