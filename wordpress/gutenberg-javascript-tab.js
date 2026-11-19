@@ -120,7 +120,7 @@ function validateCareerDatabase() {
     if (!Array.isArray(career.riasec) || career.riasec.length < 1 || career.riasec.length > 3) {
       errors.push('Invalid RIASEC length: ' + career.title);
     }
-    if (Array.isArray(career.riasec) && career.riasec.some(code => !validCodes.has(code))) {
+    if (Array.isArray(career.riasec) ? career.riasec.some(code => !validCodes.has(code)) : false) {
       errors.push('Invalid RIASEC code: ' + career.title);
     }
   });
@@ -166,7 +166,7 @@ function startDeveloperTestMode() {
   scores = {R:0, I:0, A:0, S:0, E:0, C:0};
   answers.forEach((value, index) => {
     const section = SECTIONS[Math.floor(index / 7)];
-    if (section && section.key) scores[section.key] += Number(value) || 0;
+    if (section ? section.key : false) scores[section.key] += Number(value) || 0;
   });
 
   // Tampilkan hasil langsung tanpa melewati 42 item.
@@ -258,12 +258,12 @@ function sendResultEmail() {
   })
   .then(res => res.json())
   .then(data => {
-    if (data && data.success) {
+    if (data ? data.success : false) {
       statusEl.textContent = 'Hasil berhasil dikirim ke email kamu ✓';
       statusEl.className = 'email-result-status success';
       emailInput.value = '';
     } else {
-      throw new Error((data && data.message) || 'Gagal mengirim');
+      throw new Error((data ? data.message : null) || 'Gagal mengirim');
     }
   })
   .catch(() => {
@@ -323,7 +323,7 @@ function autoSetPeminatan() {
   const kelas = document.getElementById('p-kelas').value;
   const status = document.getElementById('p-status').value;
   const peminatan = document.getElementById('p-peminatan');
-  if (status === 'SMA' && kelas === 'Kelas 10' && !peminatan.value) {
+  if ([status === 'SMA', kelas === 'Kelas 10', !peminatan.value].every(Boolean)) {
     peminatan.value = 'Belum ada peminatan';
   }
 }
@@ -362,15 +362,15 @@ function submitProfile() {
     alert('Mohon lengkapi Usia, Status Pendidikan, Asal Sekolah/Kampus, dan Domisili sebelum melanjutkan.');
     return;
   }
-  if (status === 'SMA' && (!document.getElementById('p-kelas').value || !document.getElementById('p-peminatan').value)) {
+  if ([status === 'SMA', !document.getElementById('p-kelas').value || !document.getElementById('p-peminatan').value].every(Boolean)) {
     alert('Mohon lengkapi Kelas dan Peminatan.');
     return;
   }
-  if (status === 'SMK' && (!document.getElementById('p-kelas').value || !document.getElementById('p-jurusan-smk').value.trim())) {
+  if ([status === 'SMK', !document.getElementById('p-kelas').value || !document.getElementById('p-jurusan-smk').value.trim()].every(Boolean)) {
     alert('Mohon lengkapi Kelas dan Jurusan/Kompetensi Keahlian.');
     return;
   }
-  if (status === 'Mahasiswa' && (!document.getElementById('p-semester').value || !document.getElementById('p-prodi').value.trim())) {
+  if ([status === 'Mahasiswa', !document.getElementById('p-semester').value || !document.getElementById('p-prodi').value.trim()].every(Boolean)) {
     alert('Mohon lengkapi Semester dan Program Studi.');
     return;
   }
@@ -512,9 +512,9 @@ function calculateCareerMatch(scores, career) {
 
 function getCareerMatchLabel(score, maxScore) {
   const relativeGap = maxScore - score;
-  if (score >= 70 && relativeGap <= 5) return 'Sangat Selaras';
-  if (score >= 60 && relativeGap <= 12) return 'Selaras';
-  if (score >= 50 && relativeGap <= 20) return 'Cukup Selaras';
+  if ([score >= 70, relativeGap <= 5].every(Boolean)) return 'Sangat Selaras';
+  if ([score >= 60, relativeGap <= 12].every(Boolean)) return 'Selaras';
+  if ([score >= 50, relativeGap <= 20].every(Boolean)) return 'Cukup Selaras';
   return 'Kurang Selaras';
 }
 
@@ -583,7 +583,7 @@ function showResult() {
   };
 
   participantFeedback = { akurasi: 0, relevansi: 0, komentar: '' };
-  participantSubmissionId = (window.crypto && crypto.randomUUID) ? crypto.randomUUID() : 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, c => { const r = Math.random()*16|0; return (c==='x'?r:(r&0x3|0x8)).toString(16); });
+  participantSubmissionId = (window.crypto ? crypto.randomUUID : null) ? crypto.randomUUID() : 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, c => { const r = Math.random()*16|0; return (c==='x'?r:(r&0x3|0x8)).toString(16); });
   participantSubmissionSaved = false;
   submissionSavePromise = null;
   document.getElementById('fb-komentar').value = '';
@@ -805,7 +805,7 @@ async function downloadResult() {
     // Buat ulang radar khusus PDF dengan latar putih dan label gelap agar terbaca saat dicetak.
     const originalRadar = document.getElementById('radarChart');
     const clonedRadar = clone.querySelector('#radarChart');
-    if (originalRadar && clonedRadar && originalRadar.width && originalRadar.height && window.Chart) {
+    if ([originalRadar, clonedRadar, originalRadar ? originalRadar.width : 0, originalRadar ? originalRadar.height : 0, window.Chart].every(Boolean)) {
       const pdfRadarCanvas = document.createElement('canvas');
       pdfRadarCanvas.width = originalRadar.width;
       pdfRadarCanvas.height = originalRadar.height;
@@ -883,7 +883,7 @@ async function downloadResult() {
     app.appendChild(clone);
 
     // Pastikan font/image dan layout clone selesai sebelum ditangkap.
-    if (document.fonts && document.fonts.ready) await document.fonts.ready;
+    if (document.fonts ? document.fonts.ready : false) await document.fonts.ready;
     await new Promise(resolve => setTimeout(resolve, 300));
 
     const canvas = await window.html2canvas(clone, {
@@ -948,7 +948,7 @@ async function downloadResult() {
     console.error('PDF generation error:', err);
     alert('PDF belum dapat dibuat. Pastikan halaman hasil sudah tampil dan koneksi internet aktif, kemudian coba lagi.');
   } finally {
-    if (clone && clone.parentNode) clone.remove();
+    if (clone ? clone.parentNode : false) clone.remove();
     if (btn) {
       btn.disabled = false;
       btn.textContent = originalText || '⬇ Unduh PDF';
@@ -998,7 +998,7 @@ function addToAdminDB(t1, t2, sc) {
 function doLogin() {
   const u = document.getElementById('login-user').value;
   const p = document.getElementById('login-pass').value;
-  if (u === 'admin' && p === 'admin123') {
+  if ([u === 'admin', p === 'admin123'].every(Boolean)) {
     document.getElementById('admin-login').style.display = 'none';
     initAdminCharts();
   } else {
@@ -1122,7 +1122,7 @@ function renderTable() {
   const filtered = adminDB.filter(r => {
     const matchFilter = tableFilter === 'semua' || r.t1 === tableFilter;
     const matchSearch = !search || r.name.toLowerCase().includes(search) || r.id.toLowerCase().includes(search);
-    return matchFilter && matchSearch;
+    return [matchFilter, matchSearch].every(Boolean);
   });
   document.getElementById('table-body').innerHTML = filtered.map(r => `
     <tr>
@@ -1164,7 +1164,7 @@ function scrollInfo() {
 }
 
 function closeRIASECInfo(event) {
-  if (event && event.target !== event.currentTarget) return;
+  if (event ? event.target !== event.currentTarget : false) return;
   const modal = document.getElementById('riasec-modal');
   if (!modal) return;
   modal.classList.remove('show');
