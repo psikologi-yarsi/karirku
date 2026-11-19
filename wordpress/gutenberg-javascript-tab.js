@@ -69,6 +69,8 @@
     
     // Urutan item diacak untuk setiap sesi; bank QUESTIONS tetap menjadi sumber item asli.
     let quizQuestions = QUESTIONS.slice();
+    // Timer perpindahan otomatis setelah peserta memilih jawaban.
+    let answerAdvanceTimer = null;
     
     const CAREERS = [
       {id:'career-insinyur-mesin', icon:'⚙️', title:'Insinyur Mesin', riasec:['R','I','C'], cluster:'Engineering & Technical', evidenceLevel:'DIRECT', description:'Merancang, mengembangkan, menguji, dan memperbaiki mesin serta sistem mekanik.', rationale:{R:'Bekerja dengan mesin, peralatan, dan sistem fisik.',I:'Menganalisis masalah teknis dan menerapkan prinsip rekayasa.',C:'Menggunakan spesifikasi, standar, perhitungan, dan dokumentasi teknis.'}},
@@ -447,22 +449,39 @@
         document.getElementById('btn-next').classList.remove('enabled');
       }
       document.getElementById('btn-back').style.opacity = currentQ === 0 ? '0.3' : '1';
-      document.getElementById('btn-next').textContent = currentQ === 41 ? 'Lihat Hasil ✨' : 'Lanjut →';
+      // Navigasi maju dilakukan otomatis setelah pilihan jawaban.
+      const nextButton = document.getElementById('btn-next');
+      if (nextButton) nextButton.style.display = 'none';
+      const navActions = app.querySelector('.quiz-nav-actions');
+      if (navActions) navActions.style.justifyContent = 'flex-start';
     
       const card = document.getElementById('quiz-card');
       card.style.animation = 'none'; void card.offsetWidth; card.style.animation = 'slideIn 0.35s cubic-bezier(0.4,0,0.2,1)';
     }
     
     function selectAnswer(val) {
+      // Batalkan timer sebelumnya jika peserta memilih ulang dengan cepat.
+      if (answerAdvanceTimer) clearTimeout(answerAdvanceTimer);
+
+      const answeredQuestion = currentQ;
       answers[currentQ] = val;
-      const s = quizQuestions[currentQ].s;
-      // Recalculate section score
+
+      // Recalculate section score.
       scores = {R:0,I:0,A:0,S:0,E:0,C:0};
       quizQuestions.forEach((q,i) => { if(answers[i] !== null) scores[q.s] += answers[i]; });
+
       app.querySelectorAll('.likert-btn').forEach(b => b.classList.remove('selected'));
-      app.querySelectorAll('.likert-btn[data-val="'+val+'"]')[0].classList.add('selected');
-      document.getElementById('btn-next').classList.add('enabled');
+      const selectedButton = app.querySelector('.likert-btn[data-val="'+val+'"]');
+      if (selectedButton) selectedButton.classList.add('selected');
       renderLiveScores();
+
+      // Beri jeda singkat agar pilihan terlihat sebelum item berikutnya tampil.
+      answerAdvanceTimer = setTimeout(() => {
+        answerAdvanceTimer = null;
+        if (currentQ === answeredQuestion && answers[currentQ] === val) {
+          nextQ();
+        }
+      }, 250);
     }
     
     function renderLiveScores() {
@@ -478,19 +497,27 @@
     }
     
     function nextQ() {
+      if (answerAdvanceTimer) {
+        clearTimeout(answerAdvanceTimer);
+        answerAdvanceTimer = null;
+      }
       if (answers[currentQ] === null) return;
       if (currentQ === 41) { showResult(); return; }
       currentQ++;
       renderQuestion();
     }
-    
+
     function prevQ() {
+      if (answerAdvanceTimer) {
+        clearTimeout(answerAdvanceTimer);
+        answerAdvanceTimer = null;
+      }
       if (currentQ === 0) return;
       currentQ--;
       renderQuestion();
     }
-    
-    // ========== RESULT ==========
+
+        // ========== RESULT ==========
     // ========== CAREER MATCHING ==========
     // Career profile dapat memiliki 1, 2, atau 3 dimensi.
     // Bobot 50/30/20 diterapkan hanya pada dimensi yang tersedia, lalu
