@@ -2,7 +2,7 @@
 const app = document.getElementById('karirku-app');
 if (!app) console.warn('KarirKu: #karirku-app tidak ditemukan.');
 // TODO: Ganti dengan URL Web App Apps Script setelah di-deploy
-const APPS_SCRIPT_URL = 'TEMPELKAN_URL_WEB_APP_APPS_SCRIPT_DI_SINI';
+const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzmGE-gfMYeVSg11K5dLhvIiiG66lLFebVWtAFsqcABS6OUY5rtGgMO5fceyedc-K3d/exec';
 
 // ========== DATA ==========
 const SECTIONS = [
