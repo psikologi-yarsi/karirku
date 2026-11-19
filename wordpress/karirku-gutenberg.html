@@ -1440,9 +1440,8 @@ body.admin-bar #karirku-app { top: 32px; height: calc(100dvh - 32px); }
 </div>
 </div>
 <script>
-(function () {
-  const app = document.getElementById('karirku-app');
-  if (!app) return;
+const app = document.getElementById('karirku-app');
+if (!app) console.warn('KarirKu: #karirku-app tidak ditemukan.');
 // TODO: Ganti dengan URL Web App Apps Script setelah di-deploy
 const APPS_SCRIPT_URL = 'GANTI_DENGAN_URL_WEB_APP_APPS_SCRIPT_ANDA';
 
@@ -2508,5 +2507,4 @@ window.addEventListener('load', () => {
 window.addEventListener('DOMContentLoaded', () => {
   initDemographicChecklistLimits();
 });
-})();
 </script>
