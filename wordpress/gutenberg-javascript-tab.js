@@ -291,7 +291,7 @@ let quizStartTime = null;
 let participantFeedback = { akurasi: 0, relevansi: 0, komentar: '' };
 let participantSubmissionId = '';
 let participantSubmissionSaved = false;
-let feedbackSaveTimer = null;
+let submissionSavePromise = null;
 
 function setFeedbackRating(type, value) {
   participantFeedback[type] = value;
@@ -299,7 +299,8 @@ function setFeedbackRating(type, value) {
   wrap.querySelectorAll('button').forEach((btn, i) => {
     btn.classList.toggle('active', i < value);
   });
-  scheduleFeedbackSave();
+  const statusEl = app.querySelector('.feedback-sent-note');
+  if (statusEl) statusEl.textContent = 'Penilaian belum dikirim.';
 }
 
 function generateUserId() {
@@ -584,7 +585,15 @@ function showResult() {
   participantFeedback = { akurasi: 0, relevansi: 0, komentar: '' };
   participantSubmissionId = (window.crypto && crypto.randomUUID) ? crypto.randomUUID() : 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, c => { const r = Math.random()*16|0; return (c==='x'?r:(r&0x3|0x8)).toString(16); });
   participantSubmissionSaved = false;
+  submissionSavePromise = null;
   document.getElementById('fb-komentar').value = '';
+  const feedbackStatus = app.querySelector('.feedback-sent-note');
+  if (feedbackStatus) feedbackStatus.textContent = 'Isi penilaian, lalu klik Kirim Penilaian.';
+  const feedbackButton = document.getElementById('send-feedback-btn');
+  if (feedbackButton) {
+    feedbackButton.disabled = false;
+    feedbackButton.textContent = 'Kirim Penilaian';
+  }
   ['akurasi','relevansi'].forEach(type => document.getElementById('fb-' + type).querySelectorAll('button').forEach(btn => btn.classList.remove('active')));
 
   const badge = document.getElementById('result-badge');
@@ -646,7 +655,7 @@ function showResult() {
     addToAdminDB(top, second, scores);
   },100);
 
-  saveSubmissionToSheets();
+  submissionSavePromise = saveSubmissionToSheets();
 }
 
 
@@ -672,8 +681,8 @@ async function postKarirKuData(payload) {
 }
 
 async function saveSubmissionToSheets() {
-  const statusEl = app.querySelector('.feedback-sent-note');
-  if (statusEl) statusEl.textContent = 'Menyimpan hasil ke database...';
+  const statusEl = app.querySelector('.submission-save-status');
+  if (statusEl) statusEl.textContent = 'Menyimpan hasil kuesioner ke database...';
   const responses = quizQuestions.map((q, i) => ({
     item_no: QUESTIONS.indexOf(q) + 1,
     dimension: q.s,
@@ -705,42 +714,59 @@ async function saveSubmissionToSheets() {
   try {
     const data = await postKarirKuData(payload);
     participantSubmissionSaved = true;
-    if (statusEl) statusEl.textContent = 'Hasil berhasil tersimpan. Kode partisipan: ' + (data.participant_code || participantUserId);
-    if (participantFeedback.akurasi || participantFeedback.relevansi || participantFeedback.komentar) {
-      saveFeedbackToSheets();
-    }
+    if (statusEl) statusEl.textContent = 'Hasil kuesioner berhasil tersimpan. Kode partisipan: ' + (data.participant_code || participantUserId);
+    return true;
   } catch (error) {
     console.error('KarirKu database save error:', error);
-    if (statusEl) statusEl.textContent = 'Hasil belum berhasil tersimpan. Silakan hubungi pengelola KarirKu dan sampaikan kode: ' + participantUserId;
+    if (statusEl) statusEl.textContent = 'Hasil kuesioner belum berhasil tersimpan. Kode partisipan: ' + participantUserId;
+    return false;
   }
 }
 
-function scheduleFeedbackSave() {
-  if (!participantSubmissionSaved) return;
-  if (feedbackSaveTimer) clearTimeout(feedbackSaveTimer);
-  feedbackSaveTimer = setTimeout(saveFeedbackToSheets, 900);
-}
+async function submitFeedback() {
+  const statusEl = app.querySelector('.feedback-sent-note');
+  const button = document.getElementById('send-feedback-btn');
+  if (!participantFeedback.akurasi || !participantFeedback.relevansi) {
+    if (statusEl) statusEl.textContent = 'Mohon isi kedua penilaian sebelum mengirim. Komentar bersifat opsional.';
+    return;
+  }
 
-async function saveFeedbackToSheets() {
-  if (!participantSubmissionSaved || !participantSubmissionId) return;
+  if (button) {
+    button.disabled = true;
+    button.textContent = 'Mengirim...';
+  }
+  if (statusEl) statusEl.textContent = 'Mengirim penilaian...';
+
   try {
+    if (!participantSubmissionSaved) {
+      const saved = submissionSavePromise ? await submissionSavePromise : false;
+      if (!saved || !participantSubmissionSaved) {
+        throw new Error('Hasil kuesioner belum tersimpan. Silakan coba lagi beberapa saat.');
+      }
+    }
+
     await postKarirKuData({
       action: 'updateFeedback',
       submission_uuid: participantSubmissionId,
       feedback: participantFeedback
     });
-    const statusEl = app.querySelector('.feedback-sent-note');
-    if (statusEl) statusEl.textContent = 'Feedback berhasil tersimpan. Terima kasih!';
+
+    if (statusEl) statusEl.textContent = 'Penilaian berhasil dikirim. Terima kasih!';
+    if (button) button.textContent = 'Penilaian Terkirim ✓';
   } catch (error) {
     console.error('KarirKu feedback save error:', error);
-    const statusEl = app.querySelector('.feedback-sent-note');
-    if (statusEl) statusEl.textContent = 'Feedback belum tersimpan. Periksa koneksi dan coba lagi.';
+    if (statusEl) statusEl.textContent = 'Penilaian belum berhasil dikirim: ' + error.message;
+    if (button) {
+      button.disabled = false;
+      button.textContent = 'Coba Kirim Lagi';
+    }
   }
 }
 
 function retakeQuiz() {
   participantSubmissionId = '';
   participantSubmissionSaved = false;
+  submissionSavePromise = null;
   quizStartTime = Date.now();
   goPage('quiz');
 }
