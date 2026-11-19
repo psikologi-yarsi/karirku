@@ -245,23 +245,45 @@
         </div>
       </div>
 
-      <div class="field-group">
+      <div class="field-group conditional-field" id="field-organisasi-sekolah">
         <label>Kegiatan ekstrakurikuler/organisasi siswa <span class="demographic-limit-note">(maks. 3 pilihan)</span></label>
-        <div class="multi-check-group" class="demographic-checklist">
-            <label class="multi-check-option"><input type="checkbox" name="ekskul" value="OSIS/MPK"><span>OSIS/MPK</span></label>
-            <label class="multi-check-option"><input type="checkbox" name="ekskul" value="Pramuka"><span>Pramuka</span></label>
-            <label class="multi-check-option"><input type="checkbox" name="ekskul" value="PMR"><span>PMR</span></label>
-            <label class="multi-check-option"><input type="checkbox" name="ekskul" value="Paskibra"><span>Paskibra</span></label>
-            <label class="multi-check-option"><input type="checkbox" name="ekskul" value="Organisasi/klub olahraga"><span>Organisasi/klub olahraga</span></label>
-            <label class="multi-check-option"><input type="checkbox" name="ekskul" value="Organisasi/klub seni atau musik"><span>Organisasi/klub seni atau musik</span></label>
-            <label class="multi-check-option"><input type="checkbox" name="ekskul" value="Klub bahasa Inggris/debat"><span>Klub bahasa Inggris/debat</span></label>
-            <label class="multi-check-option"><input type="checkbox" name="ekskul" value="Klub sains/matematika"><span>Klub sains/matematika</span></label>
-            <label class="multi-check-option"><input type="checkbox" name="ekskul" value="Organisasi keagamaan/kerohanian"><span>Organisasi keagamaan/kerohanian</span></label>
-            <label class="multi-check-option"><input type="checkbox" name="ekskul" value="Jurnalistik/media sekolah"><span>Jurnalistik/media sekolah</span></label>
-          <label class="multi-check-option"><input type="checkbox" name="ekskul" value="Lainnya" onchange="toggleOtherField(this, 'ekskul-lainnya')"><span>Lainnya</span></label>
+        <div class="multi-check-group demographic-checklist">
+          <label class="multi-check-option"><input type="checkbox" name="ekskul" value="OSIS/MPK" data-demographic="org-sekolah"><span>OSIS/MPK</span></label>
+          <label class="multi-check-option"><input type="checkbox" name="ekskul" value="Pramuka" data-demographic="org-sekolah"><span>Pramuka</span></label>
+          <label class="multi-check-option"><input type="checkbox" name="ekskul" value="PMR" data-demographic="org-sekolah"><span>PMR</span></label>
+          <label class="multi-check-option"><input type="checkbox" name="ekskul" value="Paskibra" data-demographic="org-sekolah"><span>Paskibra</span></label>
+          <label class="multi-check-option"><input type="checkbox" name="ekskul" value="Organisasi/klub olahraga" data-demographic="org-sekolah"><span>Organisasi/klub olahraga</span></label>
+          <label class="multi-check-option"><input type="checkbox" name="ekskul" value="Organisasi/klub seni atau musik" data-demographic="org-sekolah"><span>Organisasi/klub seni atau musik</span></label>
+          <label class="multi-check-option"><input type="checkbox" name="ekskul" value="Klub bahasa Inggris/debat" data-demographic="org-sekolah"><span>Klub bahasa Inggris/debat</span></label>
+          <label class="multi-check-option"><input type="checkbox" name="ekskul" value="Klub sains/matematika" data-demographic="org-sekolah"><span>Klub sains/matematika</span></label>
+          <label class="multi-check-option"><input type="checkbox" name="ekskul" value="Organisasi keagamaan/kerohanian" data-demographic="org-sekolah"><span>Organisasi keagamaan/kerohanian</span></label>
+          <label class="multi-check-option"><input type="checkbox" name="ekskul" value="Jurnalistik/media sekolah" data-demographic="org-sekolah"><span>Jurnalistik/media sekolah</span></label>
+          <label class="multi-check-option"><input type="checkbox" name="ekskul" value="Lainnya" onchange="toggleOtherField(this, 'ekskul-lainnya')" data-demographic="org-sekolah"><span>Lainnya</span></label>
         </div>
         <div class="multi-check-other" id="ekskul-lainnya" style="display:none">
           <input type="text" id="p-ekskul-lainnya" placeholder="Sebutkan kegiatan/organisasi lainnya">
+        </div>
+      </div>
+
+      <div class="field-group conditional-field" id="field-organisasi-kampus">
+        <label>Unit Kegiatan Mahasiswa (UKM) <span class="demographic-limit-note">(maks. 3 pilihan)</span></label>
+        <div class="multi-check-group demographic-checklist">
+          <label class="multi-check-option"><input type="checkbox" name="ukm" value="Badan Eksekutif Mahasiswa (BEM)" data-demographic="org-kampus"><span>Badan Eksekutif Mahasiswa (BEM)</span></label>
+          <label class="multi-check-option"><input type="checkbox" name="ukm" value="Dewan Perwakilan Mahasiswa (DPM)" data-demographic="org-kampus"><span>Dewan Perwakilan Mahasiswa (DPM)</span></label>
+          <label class="multi-check-option"><input type="checkbox" name="ukm" value="Himpunan Mahasiswa Program Studi (HIMA/HMJ)" data-demographic="org-kampus"><span>Himpunan Mahasiswa Program Studi (HIMA/HMJ)</span></label>
+          <label class="multi-check-option"><input type="checkbox" name="ukm" value="UKM olahraga" data-demographic="org-kampus"><span>UKM olahraga</span></label>
+          <label class="multi-check-option"><input type="checkbox" name="ukm" value="UKM seni dan budaya" data-demographic="org-kampus"><span>UKM seni dan budaya</span></label>
+          <label class="multi-check-option"><input type="checkbox" name="ukm" value="UKM kerohanian/keagamaan" data-demographic="org-kampus"><span>UKM kerohanian/keagamaan</span></label>
+          <label class="multi-check-option"><input type="checkbox" name="ukm" value="UKM pers/jurnalistik/media" data-demographic="org-kampus"><span>UKM pers/jurnalistik/media</span></label>
+          <label class="multi-check-option"><input type="checkbox" name="ukm" value="UKM penelitian/keilmuan" data-demographic="org-kampus"><span>UKM penelitian/keilmuan</span></label>
+          <label class="multi-check-option"><input type="checkbox" name="ukm" value="UKM bahasa/debat" data-demographic="org-kampus"><span>UKM bahasa/debat</span></label>
+          <label class="multi-check-option"><input type="checkbox" name="ukm" value="UKM pecinta alam/lingkungan" data-demographic="org-kampus"><span>UKM pecinta alam/lingkungan</span></label>
+          <label class="multi-check-option"><input type="checkbox" name="ukm" value="UKM sosial/kemanusiaan/relawan" data-demographic="org-kampus"><span>UKM sosial/kemanusiaan/relawan</span></label>
+          <label class="multi-check-option"><input type="checkbox" name="ukm" value="UKM kewirausahaan" data-demographic="org-kampus"><span>UKM kewirausahaan</span></label>
+          <label class="multi-check-option"><input type="checkbox" name="ukm" value="Lainnya" onchange="toggleOtherField(this, 'ukm-lainnya')" data-demographic="org-kampus"><span>Lainnya</span></label>
+        </div>
+        <div class="multi-check-other" id="ukm-lainnya" style="display:none">
+          <input type="text" id="p-ukm-lainnya" placeholder="Sebutkan UKM/organisasi lainnya">
         </div>
       </div>
 
