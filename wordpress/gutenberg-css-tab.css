@@ -601,15 +601,19 @@
   }
   #karirku-app .field-group input:focus, #karirku-app .field-group select:focus { border-color: var(--accent); }
   #karirku-app .field-group select {
-    appearance: none;
+    appearance: auto;
     cursor: pointer;
     background-color: #202039 !important;
     color: #f0eff8 !important;
-    color-scheme: dark;
+    -webkit-text-fill-color: #f0eff8 !important;
+    color-scheme: light;
   }
-  #karirku-app .field-group select option {
-    background-color: #ffffff !important;
+  #karirku-app .field-group select option,
+  #karirku-app .field-group select optgroup {
+    background: #ffffff !important;
     color: #202333 !important;
+    -webkit-text-fill-color: #202333 !important;
+    opacity: 1 !important;
   }
   #karirku-app .field-optional-tag {
     display: inline-block; font-size: 11px; font-weight: 600; color: var(--accent2);
