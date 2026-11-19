@@ -314,11 +314,15 @@
     
     function updateJenjangFields() {
       const status = document.getElementById('p-status').value;
-      document.getElementById('field-kelas').classList.toggle('show', status === 'SMA' || status === 'SMK');
+      const isSchool = status === 'SMA' || status === 'SMK';
+      const isStudent = status === 'Mahasiswa';
+      document.getElementById('field-kelas').classList.toggle('show', isSchool);
       document.getElementById('field-peminatan').classList.toggle('show', status === 'SMA');
       document.getElementById('field-jurusan-smk').classList.toggle('show', status === 'SMK');
-      document.getElementById('field-semester').classList.toggle('show', status === 'Mahasiswa');
-      document.getElementById('field-prodi').classList.toggle('show', status === 'Mahasiswa');
+      document.getElementById('field-semester').classList.toggle('show', isStudent);
+      document.getElementById('field-prodi').classList.toggle('show', isStudent);
+      document.getElementById('field-organisasi-sekolah').classList.toggle('show', isSchool);
+      document.getElementById('field-organisasi-kampus').classList.toggle('show', isStudent);
     }
     
     function autoSetPeminatan() {
@@ -394,7 +398,8 @@
         asal_institusi: institusi,
         domisili: domisili,
         hobi: getCheckedValuesWithOther('hobi', 'p-hobi-lainnya'),
-        kegiatan_ekstrakurikuler: getCheckedValuesWithOther('ekskul', 'p-ekskul-lainnya'),
+        kegiatan_ekstrakurikuler: (status === 'SMA' || status === 'SMK') ? getCheckedValuesWithOther('ekskul', 'p-ekskul-lainnya') : [],
+        unit_kegiatan_mahasiswa: status === 'Mahasiswa' ? getCheckedValuesWithOther('ukm', 'p-ukm-lainnya') : [],
         cita_cita_karier: document.getElementById('p-cita-cita').value.trim(),
         mata_pelajaran_favorit: getCheckedValuesWithOther('mapel', 'p-mapel-lainnya'),
         sumber_info: document.getElementById('p-sumber').value,
