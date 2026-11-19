@@ -1199,9 +1199,7 @@
     });
     
     
-    window.addEventListener('DOMContentLoaded', () => {
-      initDemographicChecklistLimits();
-    });
+    initDemographicChecklistLimits();
     
 
 
