@@ -259,6 +259,11 @@ function json_(data) {
  * available in Gmail > Settings > Accounts and Import > Send mail as.
  * Leave the property empty to use the Google account that owns this script.
  */
+/** Run manually once to authorise Gmail and inspect configured sender aliases. */
+function getKarirKuSenderAliases() {
+  return GmailApp.getAliases();
+}
+
 function setKarirKuSenderEmail(email) {
   const value = String(email || '').trim().toLowerCase();
   if (!value) {
@@ -352,13 +357,20 @@ function sendResultEmail_(d) {
       'Hasil asesmen RIASEC KarirKu terlampir dalam format PDF. Silakan gunakan hasil ini sebagai bahan eksplorasi minat karier.',
       options
     );
-    recordParticipantContact_(participantCode, email);
-    logEmail_(participantCode, 'SENT', 'Email dan PDF berhasil dikirim.');
-    return { success: true, message: 'Hasil asesmen berhasil dikirim.' };
   } catch (err) {
     logEmail_(participantCode, 'FAILED', cleanText_(err.message || err, 500));
     throw new Error('Email belum berhasil dikirim. Silakan coba kembali beberapa saat lagi.');
   }
+
+  // Email sudah terkirim. Kegagalan pencatatan tidak boleh membuat peserta
+  // menerima pesan gagal dan mengulang pengiriman yang sebenarnya berhasil.
+  try {
+    recordParticipantContact_(participantCode, email);
+    logEmail_(participantCode, 'SENT', 'Email dan PDF berhasil dikirim.');
+  } catch (recordErr) {
+    console.error('Email sent, but contact/log write failed: ' + recordErr.message);
+  }
+  return { success: true, message: 'Hasil asesmen berhasil dikirim.' };
 }
 
 function recordParticipantContact_(participantCode, email) {
