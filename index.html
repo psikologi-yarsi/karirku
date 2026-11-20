@@ -1450,7 +1450,7 @@
 
       <div class="email-result-box">
         <div class="er-title">Kirim hasil ini ke email kamu (opsional)</div>
-        <div class="er-hint">Email hanya dipakai sekali untuk mengirim hasil ini dan <strong style="color:var(--text)">tidak disimpan</strong> di database kami.</div>
+        <div class="er-hint">Alamat email digunakan untuk mengirim hasil asesmen dan disimpan terpisah dari data respons penelitian. Email tidak dimasukkan ke sheet Submissions.</div>
         <div class="email-result-row">
           <input type="email" id="result-email-input" placeholder="nama@email.com">
           <button class="btn-primary" id="send-email-btn" onclick="sendResultEmail()">Kirim</button>
@@ -1835,56 +1835,93 @@ function toggleConsentBtn() {
   document.getElementById('consent-btn').disabled = !checked;
 }
 
-// ========== SEND RESULT VIA EMAIL (opsional, email tidak disimpan) ==========
-function sendResultEmail() {
+// ========== SEND RESULT VIA EMAIL ==========
+async function sendResultEmail() {
   const emailInput = document.getElementById('result-email-input');
   const email = emailInput.value.trim();
   const statusEl = document.getElementById('email-result-status');
   const btn = document.getElementById('send-email-btn');
 
-  const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  const emailPattern = /^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/;
   if (!emailPattern.test(email)) {
     statusEl.textContent = 'Masukkan alamat email yang valid.';
+    statusEl.className = 'email-result-status error';
+    emailInput.focus();
+    return;
+  }
+  if (!participantUserId) {
+    statusEl.textContent = 'Kode pengisian belum tersedia. Silakan muat ulang hasil asesmen.';
+    statusEl.className = 'email-result-status error';
+    return;
+  }
+  if (!APPS_SCRIPT_URL || APPS_SCRIPT_URL.indexOf('script.google.com') === -1) {
+    statusEl.textContent = 'Layanan email belum dikonfigurasi. Silakan hubungi pengelola KarirKu.';
     statusEl.className = 'email-result-status error';
     return;
   }
 
   btn.disabled = true;
   btn.textContent = 'Mengirim...';
-  statusEl.textContent = '';
+  statusEl.textContent = 'Menyiapkan ringkasan dan PDF hasil asesmen...';
   statusEl.className = 'email-result-status';
 
-  // Kirim ke Apps Script HANYA untuk trigger pengiriman email.
-  // Email TIDAK disertakan dalam data yang tersimpan permanen (participantProfile / sheet utama).
-  fetch(APPS_SCRIPT_URL, {
-    method: 'POST',
-    headers: { 'Content-Type': 'text/plain' },
-    body: JSON.stringify({
-      action: 'sendResultEmail',
-      email: email,
-      typeCode: document.getElementById('result-badge').textContent.trim(),
-      typeName: document.getElementById('result-type-name').textContent,
-      description: document.getElementById('result-desc').textContent
-    })
-  })
-  .then(res => res.json())
-  .then(data => {
-    if (data && data.success) {
-      statusEl.textContent = 'Hasil berhasil dikirim ke email kamu ✓';
-      statusEl.className = 'email-result-status success';
-      emailInput.value = '';
-    } else {
-      throw new Error((data && data.message) || 'Gagal mengirim');
-    }
-  })
-  .catch(() => {
-    statusEl.textContent = 'Gagal mengirim email. Coba lagi nanti.';
+  const sortedSections = rankRIASEC(scores);
+  const profileSections = sortedSections.slice(0, 3).map(([key], index) => {
+    const section = SECTIONS.find(item => item.key === key);
+    return {
+      key: section.key,
+      name: section.name,
+      desc: section.desc,
+      role: ['Utama', 'Kedua', 'Ketiga'][index]
+    };
+  });
+  const careers = rankCareers(scores).slice(0, 6).map(career => ({
+    title: career.title,
+    icon: career.icon,
+    riasec: career.riasec,
+    cluster: career.cluster,
+    matchLabel: career.matchLabel,
+    matchScore: career.matchScore,
+    description: career.description,
+    rationale: career.riasec.map(code => {
+      const text = career.rationale && career.rationale[code];
+      return text ? code + ' — ' + text : '';
+    }).filter(Boolean).join(' | ')
+  }));
+
+  const payload = {
+    action: 'sendResultEmail',
+    email: email,
+    participant_code: participantUserId,
+    participantName: participantName,
+    typeCode: document.getElementById('result-type-name').textContent.trim(),
+    typeName: (document.getElementById('result-badge').textContent.split('—')[1] || '').trim(),
+    description: document.getElementById('result-desc').textContent.trim(),
+    scores: { R: scores.R, I: scores.I, A: scores.A, S: scores.S, E: scores.E, C: scores.C },
+    profileSections: profileSections,
+    careers: careers
+  };
+
+  try {
+    const response = await fetch(APPS_SCRIPT_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+      body: JSON.stringify(payload)
+    });
+    const data = await response.json();
+    if (!data || !data.success) throw new Error((data && data.message) || 'Pengiriman gagal.');
+
+    statusEl.textContent = 'Hasil asesmen berhasil dikirim. Periksa inbox atau folder spam email kamu. ✓';
+    statusEl.className = 'email-result-status success';
+    emailInput.value = '';
+  } catch (error) {
+    console.error('KarirKu email delivery:', error);
+    statusEl.textContent = error.message || 'Gagal mengirim email. Silakan coba kembali.';
     statusEl.className = 'email-result-status error';
-  })
-  .finally(() => {
+  } finally {
     btn.disabled = false;
     btn.textContent = 'Kirim';
-  });
+  }
 }
 
 // ========== PROFILE ==========
