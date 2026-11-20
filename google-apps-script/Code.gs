@@ -8,7 +8,10 @@ const KK = {
   PROP_ID: 'KARIRKU_SPREADSHEET_ID',
   PARTICIPANTS: 'Participants',
   SUBMISSIONS: 'Submissions',
-  VERSION: '1.0',
+  CONTACTS: 'ParticipantContacts',
+  EMAIL_LOGS: 'EmailLogs',
+  SENDER_PROP: 'KARIRKU_SENDER_EMAIL',
+  VERSION: '1.1',
   MAX_BYTES: 180000
 };
 
@@ -23,6 +26,12 @@ const HEADERS = {
     'consented_at', 'demographics_json', 'responses_json',
     'scores_json', 'result_json', 'feedback_json', 'source_page',
     'last_feedback_update'
+  ],
+  ParticipantContacts: [
+    'participant_code', 'email', 'first_sent_at', 'last_sent_at', 'instrument_slug'
+  ],
+  EmailLogs: [
+    'participant_code', 'sent_at', 'status', 'detail'
   ]
 };
 
@@ -45,6 +54,8 @@ function setupKarirKu() {
 
   ensureSheet_(ss, KK.PARTICIPANTS, HEADERS.Participants);
   ensureSheet_(ss, KK.SUBMISSIONS, HEADERS.Submissions);
+  ensureSheet_(ss, KK.CONTACTS, HEADERS.ParticipantContacts);
+  ensureSheet_(ss, KK.EMAIL_LOGS, HEADERS.EmailLogs);
 
   Logger.log('Spreadsheet KarirKu: ' + ss.getUrl());
   return ss.getUrl();
@@ -81,6 +92,8 @@ function doPost(e) {
       result = saveSubmission_(data);
     } else if (data.action === 'updateFeedback') {
       result = updateFeedback_(data);
+    } else if (data.action === 'sendResultEmail') {
+      result = sendResultEmail_(data);
     } else {
       throw new Error('Action tidak dikenal.');
     }
@@ -238,4 +251,211 @@ function json_(data) {
   return ContentService
     .createTextOutput(JSON.stringify(data))
     .setMimeType(ContentService.MimeType.JSON);
+}
+
+
+/**
+ * Configure a sender alias. Run manually after confirming the alias is
+ * available in Gmail > Settings > Accounts and Import > Send mail as.
+ * Leave the property empty to use the Google account that owns this script.
+ */
+function setKarirKuSenderEmail(email) {
+  const value = String(email || '').trim().toLowerCase();
+  if (!value) {
+    PropertiesService.getScriptProperties().deleteProperty(KK.SENDER_PROP);
+    return 'Pengirim dikembalikan ke akun Google pemilik Apps Script.';
+  }
+  if (!isValidEmail_(value)) throw new Error('Format alamat pengirim tidak valid.');
+  const aliases = GmailApp.getAliases().map(x => x.toLowerCase());
+  if (aliases.indexOf(value) === -1) {
+    throw new Error('Alamat tersebut belum terdaftar sebagai alias Gmail. Tambahkan dan verifikasi alias terlebih dahulu.');
+  }
+  PropertiesService.getScriptProperties().setProperty(KK.SENDER_PROP, value);
+  return 'Alias pengirim KarirKu berhasil disimpan.';
+}
+
+function sendResultEmail_(d) {
+  const email = String(d.email || '').trim().toLowerCase();
+  const participantCode = String(d.participant_code || '').trim();
+  if (!isValidEmail_(email)) throw new Error('Alamat email tidak valid.');
+  if (!/^[A-Z0-9-]{6,24}$/.test(participantCode)) {
+    throw new Error('Kode partisipan tidak valid.');
+  }
+  if (!/^[RIASEC]{3}$/.test(String(d.typeCode || ''))) {
+    throw new Error('Kode profil RIASEC tidak valid.');
+  }
+  if (!isObject_(d.scores)) throw new Error('Data skor tidak valid.');
+
+  const keys = ['R','I','A','S','E','C'];
+  const scores = {};
+  keys.forEach(key => {
+    const n = Number(d.scores[key]);
+    if (!Number.isFinite(n) || n < 0 || n > 35) throw new Error('Skor tidak valid: ' + key);
+    scores[key] = n;
+  });
+
+  const profileSections = Array.isArray(d.profileSections) ? d.profileSections.slice(0, 3) : [];
+  const careers = Array.isArray(d.careers) ? d.careers.slice(0, 6) : [];
+  if (profileSections.length !== 3 || careers.length === 0) {
+    throw new Error('Komponen hasil asesmen belum lengkap.');
+  }
+
+  const safeData = {
+    participantCode: participantCode,
+    participantName: cleanText_(d.participantName || '', 100),
+    typeCode: String(d.typeCode),
+    typeName: cleanText_(d.typeName || '', 100),
+    description: cleanText_(d.description || '', 1200),
+    scores: scores,
+    profileSections: profileSections.map(s => ({
+      key: cleanText_(s.key, 1),
+      name: cleanText_(s.name, 80),
+      desc: cleanText_(s.desc, 300),
+      role: cleanText_(s.role, 20)
+    })),
+    careers: careers.map(c => ({
+      title: cleanText_(c.title, 120),
+      icon: cleanText_(c.icon, 12),
+      riasec: Array.isArray(c.riasec) ? c.riasec.map(x => cleanText_(x, 1)).join('') : '',
+      cluster: cleanText_(c.cluster, 100),
+      matchLabel: cleanText_(c.matchLabel, 40),
+      matchScore: Math.max(0, Math.min(100, Number(c.matchScore) || 0)),
+      description: cleanText_(c.description, 500),
+      rationale: cleanText_(c.rationale || '', 700)
+    }))
+  };
+
+  const htmlBody = buildResultEmailHtml_(safeData);
+  const pdfHtml = buildResultPdfHtml_(safeData);
+  const pdfBlob = HtmlService.createHtmlOutput(pdfHtml)
+    .getBlob()
+    .getAs(MimeType.PDF)
+    .setName('KarirKu-Hasil-' + safeData.typeCode + '.pdf');
+
+  const props = PropertiesService.getScriptProperties();
+  const configuredSender = String(props.getProperty(KK.SENDER_PROP) || '').trim().toLowerCase();
+  const aliases = GmailApp.getAliases().map(x => x.toLowerCase());
+  const options = {
+    name: 'KarirKu',
+    htmlBody: htmlBody,
+    attachments: [pdfBlob]
+  };
+  if (configuredSender && aliases.indexOf(configuredSender) !== -1) {
+    options.from = configuredSender;
+    options.replyTo = configuredSender;
+  }
+
+  try {
+    GmailApp.sendEmail(
+      email,
+      'Hasil Asesmen Minat Karier KarirKu — ' + safeData.typeCode,
+      'Hasil asesmen RIASEC KarirKu terlampir dalam format PDF. Silakan gunakan hasil ini sebagai bahan eksplorasi minat karier.',
+      options
+    );
+    recordParticipantContact_(participantCode, email);
+    logEmail_(participantCode, 'SENT', 'Email dan PDF berhasil dikirim.');
+    return { success: true, message: 'Hasil asesmen berhasil dikirim.' };
+  } catch (err) {
+    logEmail_(participantCode, 'FAILED', cleanText_(err.message || err, 500));
+    throw new Error('Email belum berhasil dikirim. Silakan coba kembali beberapa saat lagi.');
+  }
+}
+
+function recordParticipantContact_(participantCode, email) {
+  const sheet = getSpreadsheet_().getSheetByName(KK.CONTACTS);
+  const row = findValue_(sheet, 1, participantCode);
+  const now = new Date();
+  if (row > 0) {
+    sheet.getRange(row, 2).setValue(email);
+    sheet.getRange(row, 4).setValue(now);
+  } else {
+    sheet.appendRow([participantCode, email, now, now, 'riasec']);
+  }
+}
+
+function logEmail_(participantCode, status, detail) {
+  const sheet = getSpreadsheet_().getSheetByName(KK.EMAIL_LOGS);
+  sheet.appendRow([participantCode, new Date(), status, cleanText_(detail, 500)]);
+}
+
+function isValidEmail_(email) {
+  return /^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/.test(String(email || ''));
+}
+
+function htmlEscape_(value) {
+  return String(value == null ? '' : value).replace(/[&<>'"]/g, c => ({
+    '&':'&amp;', '<':'&lt;', '>':'&gt;', "'":'&#39;', '"':'&quot;'
+  }[c]));
+}
+
+function buildResultEmailHtml_(d) {
+  const scoreRows = ['R','I','A','S','E','C'].map(key =>
+    '<tr><td style="padding:7px 10px;border-bottom:1px solid #e8e8ef"><b>' + key +
+    '</b></td><td style="padding:7px 10px;border-bottom:1px solid #e8e8ef">' +
+    htmlEscape_(d.scores[key]) + ' / 35</td></tr>'
+  ).join('');
+  const top = d.profileSections.map(s =>
+    '<li><b>' + htmlEscape_(s.name) + '</b> (' + htmlEscape_(s.key) +
+    ') — ' + htmlEscape_(s.role) + '</li>'
+  ).join('');
+  const careers = d.careers.slice(0, 3).map(c =>
+    '<li style="margin-bottom:8px"><b>' + htmlEscape_(c.title) + '</b> — ' +
+    htmlEscape_(c.matchLabel) + ' (' + htmlEscape_(c.matchScore) + '/100)</li>'
+  ).join('');
+  const greeting = d.participantName ? 'Halo ' + htmlEscape_(d.participantName) + ',' : 'Halo,';
+  return '<div style="font-family:Arial,sans-serif;color:#25243a;line-height:1.6;max-width:680px">' +
+    '<div style="padding:22px;background:#17152f;color:#fff;border-radius:14px">' +
+    '<div style="font-size:13px;opacity:.8">HASIL ASESMEN KARIRKU</div>' +
+    '<div style="font-size:30px;font-weight:bold;margin-top:6px">' + htmlEscape_(d.typeCode) + '</div>' +
+    '<div style="font-size:15px">' + htmlEscape_(d.typeName) + '</div></div>' +
+    '<p>' + greeting + '</p><p>' + htmlEscape_(d.description) + '</p>' +
+    '<h3>Dimensi minat utama</h3><ol>' + top + '</ol>' +
+    '<h3>Ringkasan skor RIASEC</h3><table style="border-collapse:collapse;width:100%">' + scoreRows + '</table>' +
+    '<h3>Rekomendasi karier teratas</h3><ol>' + careers + '</ol>' +
+    '<p>PDF terlampir memuat profil, skor lengkap, dan enam rekomendasi karier beserta penjelasannya.</p>' +
+    '<p style="font-size:12px;color:#666">Hasil ini menggambarkan pola minat, bukan kemampuan atau jaminan keberhasilan karier. Gunakan sebagai bahan eksplorasi bersama informasi lain.</p>' +
+    '<p>Salam,<br><b>Tim KarirKu</b></p></div>';
+}
+
+function buildResultPdfHtml_(d) {
+  const colors = {R:'#e75d5d', I:'#d9942f', A:'#a36bd0', S:'#299bad', E:'#dc8b1c', C:'#43a86a'};
+  const scoreRows = ['R','I','A','S','E','C'].map(key => {
+    const width = Math.round((d.scores[key] / 35) * 100);
+    return '<div style="display:flex;align-items:center;gap:10px;margin:10px 0">' +
+      '<b style="width:22px;color:' + colors[key] + '">' + key + '</b>' +
+      '<div style="flex:1;background:#edf0f5;height:10px;border-radius:8px;overflow:hidden">' +
+      '<div style="width:' + width + '%;height:10px;background:' + colors[key] + '"></div></div>' +
+      '<span style="width:48px;text-align:right">' + d.scores[key] + '/35</span></div>';
+  }).join('');
+  const profile = d.profileSections.map(s =>
+    '<div style="padding:12px;border:1px solid #e2e5ed;border-radius:10px;margin:8px 0">' +
+    '<b style="color:' + (colors[s.key] || '#333') + '">' + htmlEscape_(s.key) + ' · ' +
+    htmlEscape_(s.role) + ' — ' + htmlEscape_(s.name) + '</b><p style="margin:5px 0 0">' +
+    htmlEscape_(s.desc) + '</p></div>'
+  ).join('');
+  const careers = d.careers.map((c, i) =>
+    '<div style="page-break-inside:avoid;padding:12px 0;border-bottom:1px solid #e5e7eb">' +
+    '<h3 style="margin:0 0 5px">' + (i + 1) + '. ' + htmlEscape_(c.icon) + ' ' + htmlEscape_(c.title) + '</h3>' +
+    '<div style="font-size:11px;color:#596174">' + htmlEscape_(c.riasec) + ' · ' +
+    htmlEscape_(c.cluster) + ' · ' + htmlEscape_(c.matchLabel) + ' · ' + c.matchScore + '/100</div>' +
+    '<p>' + htmlEscape_(c.description) + '</p><p style="font-size:12px;color:#4b5563">' +
+    htmlEscape_(c.rationale) + '</p></div>'
+  ).join('');
+  const name = d.participantName ? '<p style="color:#596174">Untuk: ' + htmlEscape_(d.participantName) + '</p>' : '';
+  return '<html><head><meta charset="UTF-8"><style>' +
+    'body{font-family:Arial,sans-serif;color:#202333;font-size:12px;line-height:1.55;margin:34px}' +
+    'h1{font-size:25px;margin:0}h2{font-size:16px;margin:22px 0 8px;color:#39345d}' +
+    '.hero{background:#f1efff;padding:22px;border-radius:14px;margin-bottom:20px}' +
+    '.muted{color:#596174} .note{background:#f6f7fa;padding:12px;border-radius:8px;margin-top:22px;font-size:10px}' +
+    '</style></head><body>' +
+    '<div class="hero"><div style="font-size:10px;letter-spacing:2px;color:#6254a3">KARIRKU · LAPORAN ASESMEN</div>' +
+    '<h1>Profil RIASEC ' + htmlEscape_(d.typeCode) + '</h1><p style="margin:4px 0">' +
+    htmlEscape_(d.typeName) + '</p>' + name + '</div>' +
+    '<h2>Gambaran profil</h2><p>' + htmlEscape_(d.description) + '</p>' +
+    '<h2>Tiga dimensi minat utama</h2>' + profile +
+    '<h2>Skor lengkap RIASEC</h2>' + scoreRows +
+    '<h2>Rekomendasi karier</h2>' + careers +
+    '<div class="note"><b>Catatan interpretasi</b><br>Profil RIASEC menggambarkan pola minat, bukan kemampuan, prestasi, atau jaminan bahwa suatu karier pasti cocok. Rekomendasi merupakan bahan eksplorasi dan perlu dipertimbangkan bersama kemampuan, nilai pribadi, pengalaman, serta informasi pendidikan dan pekerjaan.</div>' +
+    '<p style="font-size:10px;color:#777;margin-top:22px">KarirKu · Eksplorasi Jalur Karier yang Selaras dengan Minatmu</p>' +
+    '</body></html>';
 }
